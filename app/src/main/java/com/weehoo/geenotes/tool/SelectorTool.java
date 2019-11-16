@@ -70,5 +70,6 @@ public class SelectorTool implements ITool {
     @Override
     public void onDeselect(CanvasView canvasView) {
         // Clear selector rectangle.
+        canvasView.ClearOverlay();
     }
 }
