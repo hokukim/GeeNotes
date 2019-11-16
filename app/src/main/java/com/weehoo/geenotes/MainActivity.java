@@ -7,13 +7,14 @@ import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.weehoo.geenotes.input.IInput;
-import com.weehoo.geenotes.input.PenInput;
+import com.weehoo.geenotes.canvas.CanvasView;
+import com.weehoo.geenotes.tool.ITool;
+import com.weehoo.geenotes.tool.PenTool;
 
 public class MainActivity extends AppCompatActivity {
 
     private CanvasView mCanvasView;
-    private IInput input;
+    private ITool mTool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        input = new PenInput();
+        mTool = new PenTool();
 
         mCanvasView = new CanvasView(this);
         setContentView(mCanvasView);
@@ -41,18 +42,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         boolean drawingChanged = false;
 
-        if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            for (int i = 0; i < event.getPointerCount(); i++) {
-                switch (event.getToolType(i)) {
-                    case MotionEvent.TOOL_TYPE_STYLUS: {
-                        // Send input event to input object.
-                        drawingChanged = input.onTouchEvent(event, mCanvasView);
-                    } break;
-
-                    case MotionEvent.TOOL_TYPE_FINGER: {
-                        // TODO?
-                    } break;
-                }
+        for (int i = 0; i < event.getPointerCount(); i++) {
+            switch (event.getToolType(i)) {
+                case MotionEvent.TOOL_TYPE_STYLUS: {
+                    // Send input event to input object.)
+                    drawingChanged = mTool.onTouchEvent(event, mCanvasView);
+                } break;
             }
         }
 
