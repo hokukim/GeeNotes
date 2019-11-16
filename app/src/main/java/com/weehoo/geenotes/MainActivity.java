@@ -31,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
      * @return Return true if you have consumed the event, false if you haven't.
      * The default implementation always returns false.
      */
-    private boolean b = true;
-
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean invalidate = false;
@@ -40,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             for (int i = 0; i < event.getPointerCount(); i++) {
                 switch (event.getToolType(i)) {
-                   // case MotionEvent.TOOL_TYPE_FINGER:
                     case MotionEvent.TOOL_TYPE_STYLUS: {
                         // Add historical (batched) points.
                         for (int j = 0; j < event.getHistorySize() - 1; j++) {
@@ -48,8 +45,13 @@ public class MainActivity extends AppCompatActivity {
                                     event.getHistoricalX(j + 1), event.getHistoricalY(j + 1));
                         }
 
+                        // Flag that drawing area needs to be invalidated and redrawn.
                         invalidate = true;
 
+                        break;
+                    }
+
+                    case MotionEvent.TOOL_TYPE_FINGER: {
                         break;
                     }
                 }
