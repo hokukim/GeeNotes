@@ -7,9 +7,13 @@ import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.weehoo.geenotes.input.IInput;
+import com.weehoo.geenotes.input.PenInput;
+
 public class MainActivity extends AppCompatActivity {
 
     private CanvasView mCanvasView;
+    private IInput input;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        input = new PenInput();
 
         mCanvasView = new CanvasView(this);
         setContentView(mCanvasView);
@@ -33,34 +39,29 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean invalidate = false;
+        boolean drawingChanged = false;
 
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             for (int i = 0; i < event.getPointerCount(); i++) {
                 switch (event.getToolType(i)) {
                     case MotionEvent.TOOL_TYPE_STYLUS: {
-                        // Add historical (batched) points.
-                        for (int j = 0; j < event.getHistorySize() - 1; j++) {
-                            mCanvasView.drawLine(event.getHistoricalX(j), event.getHistoricalY(j),
-                                    event.getHistoricalX(j + 1), event.getHistoricalY(j + 1));
-                        }
-
-                        // Flag that drawing area needs to be invalidated and redrawn.
-                        invalidate = true;
-
-                        break;
-                    }
+                        // Send input event to input object.
+                        drawingChanged = input.onTouchEvent(event, mCanvasView);
+                    } break;
 
                     case MotionEvent.TOOL_TYPE_FINGER: {
-                        break;
-                    }
+                        // TODO?
+                    } break;
                 }
             }
         }
 
-        if (invalidate) {
+        if (drawingChanged) {
+            // Drawing has changed.
+            // Invalidate view so it can be redrawn.
             mCanvasView.invalidate();
         }
+
         return true;
     }
 
