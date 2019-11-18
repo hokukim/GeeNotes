@@ -1,9 +1,12 @@
 package com.weehoo.geenotes.tool;
 
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.PorterDuff;
+import android.graphics.RectF;
 import android.view.MotionEvent;
+
 import com.weehoo.geenotes.canvas.CanvasView;
 
 public class SelectorTool implements ITool {
@@ -12,9 +15,22 @@ public class SelectorTool implements ITool {
     private PointF mStartPoint;
     private PointF mEndPoint;
 
+    private Paint mSelectorRectPaint;
+
     public SelectorTool() {
         mStartPoint = null;
         mEndPoint = null;
+
+        // Set selector rect paint.
+        mSelectorRectPaint = new Paint();
+        mSelectorRectPaint.setColor(Color.BLACK);
+        mSelectorRectPaint.setStyle(Paint.Style.STROKE);
+        mSelectorRectPaint.setStrokeWidth(2);
+        mSelectorRectPaint.setStrokeCap(Paint.Cap.SQUARE);
+        mSelectorRectPaint.setStrokeJoin(Paint.Join.BEVEL);
+        mSelectorRectPaint.setAntiAlias(true);
+        mSelectorRectPaint.setDither(true);
+        mSelectorRectPaint.setPathEffect(new DashPathEffect(new float [] {10, 10}, 0));
     }
 
     /**
@@ -44,9 +60,8 @@ public class SelectorTool implements ITool {
                     // End new selection rectangle.
                     mEndPoint = new PointF(event.getX(0), event.getY(0));
 
-                    canvasView.overlayCanvas.drawRect(mStartPoint.x, mStartPoint.y,
-                                                mEndPoint.x, mEndPoint.y,
-                                                canvasView.overlayPaint);
+                    // Draw selector UI.
+                    this.drawSelector(canvasView);
 
                     // Reset points so a new selection can be drawn.
                     mStartPoint = null;
@@ -71,5 +86,25 @@ public class SelectorTool implements ITool {
     public void onDeselect(CanvasView canvasView) {
         // Clear selector rectangle.
         canvasView.ClearOverlay();
+    }
+
+    /**
+     * Draw selection box with menu.
+     */
+    private void drawSelector(CanvasView canvasView) {
+        // Draw selection rectangle.
+        RectF selectionRect = new RectF(Math.min(mStartPoint.x, mEndPoint.x), Math.min(mStartPoint.y, mEndPoint.y),
+                                      Math.max(mStartPoint.x, mEndPoint.x), Math.max(mStartPoint.y, mEndPoint.y));
+
+        canvasView.overlayCanvas.drawRect(selectionRect, mSelectorRectPaint);
+
+        // Draw menu.
+        // https://developer.android.com/guide/topics/graphics/drawables
+        canvasView.overlayCanvas.drawRect(selectionRect.right - 32, selectionRect.top - 32,
+                selectionRect.right, selectionRect.top,
+                mSelectorRectPaint);
+
+//        ImageButton button = new ImageButton(canvasView.getRootView().getContext());
+//        canvasView.overlayCanvas.drawPicture();
     }
 }

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.PathDashPathEffect;
 import android.view.View;
 
 public class CanvasView extends View {
@@ -70,8 +72,8 @@ public class CanvasView extends View {
         super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
-        canvas.drawBitmap(mBackgroundBitmap, 0, 0, backgroundPaint);
-        canvas.drawBitmap(mPrimaryBitmap, 0, 0, primaryPaint);
+      //  canvas.drawBitmap(mBackgroundBitmap, 0, 0, backgroundPaint);
+     //   canvas.drawBitmap(mPrimaryBitmap, 0, 0, primaryPaint);
         canvas.drawBitmap(mOverlayBitmap, 0, 0, overlayPaint);
     }
 
@@ -108,7 +110,7 @@ public class CanvasView extends View {
     private void initializePaints() {
         // Background paint.
         backgroundPaint = new Paint();
-        backgroundPaint.setColor(Color.LTGRAY);
+        backgroundPaint.setColor(Color.BLACK);
         backgroundPaint.setStyle(Paint.Style.STROKE);
         backgroundPaint.setStrokeWidth(1);
         backgroundPaint.setStrokeCap(Paint.Cap.SQUARE);
@@ -128,7 +130,7 @@ public class CanvasView extends View {
 
         // Overlay paint.
         overlayPaint = new Paint();
-        overlayPaint.setColor(Color.GRAY);
+        overlayPaint.setColor(Color.BLACK);
         overlayPaint.setStyle(Paint.Style.STROKE);
         overlayPaint.setStrokeWidth(2);
         overlayPaint.setStrokeCap(Paint.Cap.SQUARE);
