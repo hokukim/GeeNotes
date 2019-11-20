@@ -24,8 +24,8 @@ public class CanvasView extends View {
     private final float mYOffset = -81;
 
     // Store an internal canvas with bitmaps.
-    // Draw onto internal bitmaps through an internal canvas,
-    // Then draw the bitmaps to the UI canvas view.
+    //  Draw onto internal bitmaps through an internal canvas,
+    //  Then draw the bitmaps to the UI canvas view.
     private Bitmap mBackgroundBitmap;
     private Bitmap mPrimaryBitmap;
     private Bitmap mOverlayBitmap;
@@ -72,8 +72,8 @@ public class CanvasView extends View {
         super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
-      //  canvas.drawBitmap(mBackgroundBitmap, 0, 0, backgroundPaint);
-     //   canvas.drawBitmap(mPrimaryBitmap, 0, 0, primaryPaint);
+        canvas.drawBitmap(mBackgroundBitmap, 0, 0, backgroundPaint);
+        canvas.drawBitmap(mPrimaryBitmap, 0, 0, primaryPaint);
         canvas.drawBitmap(mOverlayBitmap, 0, 0, overlayPaint);
     }
 
