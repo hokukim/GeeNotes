@@ -14,24 +14,26 @@ public class SelectorTool implements ITool {
     // Start and end points of selection rectangle.
     private PointF mStartPoint;
     private PointF mEndPoint;
+    private RectF mSelectionRect;
 
-    private Paint mSelectorRectPaint;
+    private Paint mSelectionRectPaint;
 
     public SelectorTool() {
         mStartPoint = null;
         mEndPoint = null;
+        mSelectionRect = null;
 
         // Set selector rect paint, thin dashed.
-        mSelectorRectPaint = new Paint();
-        mSelectorRectPaint.setColor(Color.BLACK);
-        mSelectorRectPaint.setAlpha(150);
-        mSelectorRectPaint.setStyle(Paint.Style.STROKE);
-        mSelectorRectPaint.setStrokeWidth(2);
-        mSelectorRectPaint.setStrokeCap(Paint.Cap.SQUARE);
-        mSelectorRectPaint.setStrokeJoin(Paint.Join.BEVEL);
-        mSelectorRectPaint.setAntiAlias(true);
-        mSelectorRectPaint.setDither(true);
-        mSelectorRectPaint.setPathEffect(new DashPathEffect(new float [] {10, 10}, 0));
+        mSelectionRectPaint = new Paint();
+        mSelectionRectPaint.setColor(Color.BLACK);
+        mSelectionRectPaint.setAlpha(150);
+        mSelectionRectPaint.setStyle(Paint.Style.STROKE);
+        mSelectionRectPaint.setStrokeWidth(2);
+        mSelectionRectPaint.setStrokeCap(Paint.Cap.SQUARE);
+        mSelectionRectPaint.setStrokeJoin(Paint.Join.BEVEL);
+        mSelectionRectPaint.setAntiAlias(true);
+        mSelectionRectPaint.setDither(true);
+        mSelectionRectPaint.setPathEffect(new DashPathEffect(new float [] {10, 10}, 0));
     }
 
     /**
@@ -62,7 +64,7 @@ public class SelectorTool implements ITool {
                 }
 
                 // Draw selector UI.
-                this.drawSelector(canvasView);
+                this.drawSelectionRect(canvasView);
 
                 // Reset points so a new selection can be drawn.
                 mStartPoint = null;
@@ -75,7 +77,7 @@ public class SelectorTool implements ITool {
                 canvasView.ClearOverlay();
 
                 // Draw selector UI.
-                this.drawSelector(canvasView, false);
+                this.drawSelectionRect(canvasView, false);
             } break;
         }
 
@@ -99,26 +101,26 @@ public class SelectorTool implements ITool {
     /**
      * Draw selection box with menu.
      */
-    private void drawSelector(CanvasView canvasView) {
-        this.drawSelector(canvasView, true);
+    private void drawSelectionRect(CanvasView canvasView) {
+        this.drawSelectionRect(canvasView, true);
     }
 
     /**
      * Draw selection box with optional menu.
      */
-    private void drawSelector(CanvasView canvasView, boolean drawMenu) {
-        // Draw selection rectangle.
-        RectF selectionRect = new RectF(Math.min(mStartPoint.x, mEndPoint.x), Math.min(mStartPoint.y, mEndPoint.y),
+    private void drawSelectionRect(CanvasView canvasView, boolean drawMenu) {
+        // Selection rectangle.
+        mSelectionRect = new RectF(Math.min(mStartPoint.x, mEndPoint.x), Math.min(mStartPoint.y, mEndPoint.y),
                                       Math.max(mStartPoint.x, mEndPoint.x), Math.max(mStartPoint.y, mEndPoint.y));
 
-        canvasView.overlayCanvas.drawRect(selectionRect, mSelectorRectPaint);
+        canvasView.overlayCanvas.drawRect(mSelectionRect, mSelectionRectPaint);
 
+        // Optional menu.
         if (drawMenu) {
-            // Draw menu.
             // https://developer.android.com/guide/topics/graphics/drawables
-            canvasView.overlayCanvas.drawRect(selectionRect.right - 32, selectionRect.top - 32,
-                    selectionRect.right, selectionRect.top,
-                    mSelectorRectPaint);
+            canvasView.overlayCanvas.drawRect(mSelectionRect.right - 32, mSelectionRect.top - 32,
+                    mSelectionRect.right, mSelectionRect.top,
+                    mSelectionRectPaint);
 
 //        ImageButton button = new ImageButton(canvasView.getRootView().getContext());
 //        canvasView.overlayCanvas.drawPicture();
