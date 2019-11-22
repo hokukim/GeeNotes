@@ -1,5 +1,6 @@
 package com.weehoo.geenotes.tool;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
@@ -8,22 +9,42 @@ import android.graphics.RectF;
 import android.view.MotionEvent;
 
 import com.weehoo.geenotes.canvas.CanvasView;
+import com.weehoo.geenotes.menu.Menu;
+import com.weehoo.geenotes.menu.MenuAlign;
+import com.weehoo.geenotes.menu.MenuAnchor;
+import com.weehoo.geenotes.menu.MenuItem;
 
 public class SelectorTool implements ITool {
+
+    // Selector tool menu item IDs.
+    private final String MENU_ITEM_ID_DELETE = "MENU_ITEM_ID_DELETE";
+    private final String MENU_ITEM_ID_CANCEL = "MENU_ITEM_ID_CANCEL";
+    private final String MENU_ITEM_ID_MOVE = "MENU_ITEM_ID_MOVE";
 
     // Start and end points of selection rectangle.
     private PointF mStartPoint;
     private PointF mEndPoint;
     private RectF mSelectionRect;
 
+    // Menu.
+    private Menu mMenu;
+
+    // Drawing.
     private Paint mSelectionRectPaint;
 
+    /**
+     * Default constructor.
+     */
     public SelectorTool() {
         mStartPoint = null;
         mEndPoint = null;
         mSelectionRect = null;
 
-        // Set selector rect paint, thin dashed.
+        // Initialize selector menu.
+        mMenu = new Menu();
+        mMenu.addItem(new MenuItem(MENU_ITEM_ID_MOVE, null), MenuAlign.MENU_ALIGN_RIGHT);
+
+        // Set selector paint, thin dashed.
         mSelectionRectPaint = new Paint();
         mSelectionRectPaint.setColor(Color.BLACK);
         mSelectionRectPaint.setAlpha(150);
@@ -117,13 +138,8 @@ public class SelectorTool implements ITool {
 
         // Optional menu.
         if (drawMenu) {
-            // https://developer.android.com/guide/topics/graphics/drawables
-            canvasView.overlayCanvas.drawRect(mSelectionRect.right - 32, mSelectionRect.top - 32,
-                    mSelectionRect.right, mSelectionRect.top,
-                    mSelectionRectPaint);
-
-//        ImageButton button = new ImageButton(canvasView.getRootView().getContext());
-//        canvasView.overlayCanvas.drawPicture();
+            PointF point = new PointF(mSelectionRect.right, mSelectionRect.top);
+            mMenu.draw(canvasView.overlayCanvas, point, MenuAnchor.MENU_ANCHOR_BOTTOM_RIGHT, mSelectionRectPaint);
         }
     }
 }
