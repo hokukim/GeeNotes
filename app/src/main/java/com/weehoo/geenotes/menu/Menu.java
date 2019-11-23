@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A menu with items that can be drawn to a canvas.
@@ -100,6 +101,8 @@ public class Menu {
         }
 
         // Draw left and right menu items concurrently.
+        List<Thread> waiters = new ArrayList<>();
+
         for (int i = 0; i < mLeftItems.size(); i++) {
             // Calculate item rect.
             float xTranslate = i * MENU_ITEM_WIDTH;  // x translation from rect left edge.
@@ -107,7 +110,9 @@ public class Menu {
             RectF itemRect = new RectF(left, mRect.top, left + MENU_ITEM_WIDTH, mRect.bottom);
 
             // Draw left item.
-            new MenuItemDrawRunnable(canvas, itemRect, mLeftItems.get(i).getBitmap(), paint).draw();
+            Thread waiter = new Thread(new MenuItemDrawRunnable(canvas, itemRect, mLeftItems.get(i).getBitmap(), paint));
+            waiter.start();
+            waiters.add(waiter);
         }
 
         for (int i = 0; i < mRightItems.size(); i++) {
@@ -116,8 +121,18 @@ public class Menu {
             RectF itemRect = new RectF(left, mRect.top, left + MENU_ITEM_WIDTH, mRect.bottom);
 
             // Draw right item.
-            //(new Thread(new MenuItemDrawRunnable(canvas, itemRect, mRightItems.get(i).getBitmap(), paint))).start();
-            new MenuItemDrawRunnable(canvas, itemRect, mRightItems.get(i).getBitmap(), paint).draw();
+            Thread waiter = new Thread(new MenuItemDrawRunnable(canvas, itemRect, mRightItems.get(i).getBitmap(), paint));
+            waiter.start();
+            waiters.add(waiter);
+        }
+
+        // Wait for threads to finish (die).
+        for (Thread waiter : waiters) {
+            try {
+                waiter.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -166,17 +181,5 @@ public class Menu {
             // Draw border rectangle.
             mCanvas.drawRect(mRect, mPaint);
         }
-
-        public void draw() {
-            // Draw icon.
-            if (mBitmap != null) {
-                mCanvas.drawBitmap(mBitmap, mRect.left, mRect.top, mPaint);
-            }
-
-            // Draw border rectangle.
-            mCanvas.drawRect(mRect, mPaint);
-        }
-
-
     }
 }
