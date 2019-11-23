@@ -6,12 +6,10 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.tool.ITool;
-import com.weehoo.geenotes.tool.PenTool;
-import com.weehoo.geenotes.tool.SelectorTool;
+import com.weehoo.geenotes.tool.SelectionTool;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         mCanvasView = new CanvasView(this);
         setContentView(mCanvasView);
 
-        mTool = new SelectorTool(this);
+        mTool = new SelectionTool(this, mCanvasView);
     }
 
     /**
@@ -48,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 case MotionEvent.TOOL_TYPE_FINGER:
                 case MotionEvent.TOOL_TYPE_STYLUS: {
                     // Send input event to input object.)
-                    drawingChanged = mTool.onTouchEvent(event, mCanvasView);
+                    drawingChanged = mTool.onTouchEvent(event);
                 } break;
             }
         }

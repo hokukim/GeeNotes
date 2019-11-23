@@ -4,14 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
-import android.graphics.PathDashPathEffect;
 import android.view.View;
 
-import com.weehoo.geenotes.R;
-
 public class CanvasView extends View {
+    public final Bitmap.Config bitmapConfig;
 
     public Canvas backgroundCanvas;
     public Canvas primaryCanvas;
@@ -38,6 +35,8 @@ public class CanvasView extends View {
      */
     public CanvasView(Context context) {
         super(context);
+
+        bitmapConfig = Bitmap.Config.ARGB_8888;
 
         // Initialize paints.
         this.initializePaints();
@@ -94,15 +93,15 @@ public class CanvasView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         // Set background canvas with bitmap.
-        mBackgroundBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mBackgroundBitmap = Bitmap.createBitmap(w, h, bitmapConfig);
         backgroundCanvas = new Canvas(mBackgroundBitmap);
 
         // Set primary canvas with bitmap.
-        mPrimaryBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mPrimaryBitmap = Bitmap.createBitmap(w, h, bitmapConfig);
         primaryCanvas = new Canvas(mPrimaryBitmap);
 
         // Set overlay canvas with bitmap.
-        mOverlayBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mOverlayBitmap = Bitmap.createBitmap(w, h, bitmapConfig);
         overlayCanvas = new Canvas(mOverlayBitmap);
     }
 

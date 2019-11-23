@@ -6,16 +6,16 @@ import android.graphics.Bitmap;
  * A menu item that can be added to a Menu.
  */
 public class MenuItem {
-    private String mId;
+    private MenuItemType mType;
     private Bitmap mBitmap;
 
-    public MenuItem(String id, Bitmap bitmap) {
-        mId = id;
+    public MenuItem(MenuItemType type, Bitmap bitmap) {
+        mType = type;
         mBitmap = bitmap;
     }
 
-    public String getId() {
-        return mId;
+    public MenuItemType getType() {
+        return mType;
     }
 
     public Bitmap getBitmap() {
