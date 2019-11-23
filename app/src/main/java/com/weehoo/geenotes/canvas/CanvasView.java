@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.graphics.PathDashPathEffect;
 import android.view.View;
 
+import com.weehoo.geenotes.R;
+
 public class CanvasView extends View {
 
     public Canvas backgroundCanvas;

@@ -1,6 +1,9 @@
 package com.weehoo.geenotes.tool;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
@@ -8,6 +11,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 
+import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.menu.Menu;
 import com.weehoo.geenotes.menu.MenuAlign;
@@ -33,28 +37,15 @@ public class SelectorTool implements ITool {
     private Paint mSelectionRectPaint;
 
     /**
-     * Default constructor.
+     * Constructor.
      */
-    public SelectorTool() {
+    public SelectorTool(Context context) {
         mStartPoint = null;
         mEndPoint = null;
         mSelectionRect = null;
 
-        // Initialize selector menu.
-        mMenu = new Menu();
-        mMenu.addItem(new MenuItem(MENU_ITEM_ID_MOVE, null), MenuAlign.MENU_ALIGN_RIGHT);
-
-        // Set selector paint, thin dashed.
-        mSelectionRectPaint = new Paint();
-        mSelectionRectPaint.setColor(Color.BLACK);
-        mSelectionRectPaint.setAlpha(150);
-        mSelectionRectPaint.setStyle(Paint.Style.STROKE);
-        mSelectionRectPaint.setStrokeWidth(2);
-        mSelectionRectPaint.setStrokeCap(Paint.Cap.SQUARE);
-        mSelectionRectPaint.setStrokeJoin(Paint.Join.BEVEL);
-        mSelectionRectPaint.setAntiAlias(true);
-        mSelectionRectPaint.setDither(true);
-        mSelectionRectPaint.setPathEffect(new DashPathEffect(new float [] {10, 10}, 0));
+        this.InitializeSelectorMenu(context);
+        this.InitializeSelectorPaint();
     }
 
     /**
@@ -138,8 +129,35 @@ public class SelectorTool implements ITool {
 
         // Optional menu.
         if (drawMenu) {
-            PointF point = new PointF(mSelectionRect.right, mSelectionRect.top);
-            mMenu.draw(canvasView.overlayCanvas, point, MenuAnchor.MENU_ANCHOR_BOTTOM_RIGHT, mSelectionRectPaint);
+            RectF menuRect = new RectF(mSelectionRect.left, 0, mSelectionRect.right, mSelectionRect.top);
+            mMenu.draw(canvasView.overlayCanvas, menuRect, MenuAnchor.MENU_ANCHOR_BOTTOM, mSelectionRectPaint);
         }
+    }
+
+    private void InitializeSelectorMenu(Context context) {
+        // Initialize selector menu.
+        mMenu = new Menu();
+
+        // Menu item: Move.
+        Bitmap moveBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_selector_menu_move);
+        mMenu.addItem(new MenuItem(MENU_ITEM_ID_MOVE, moveBitmap), MenuAlign.MENU_ALIGN_RIGHT);
+
+        // Menu item: Delete.
+        Bitmap deleteBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_selector_menu_delete);
+        mMenu.addItem(new MenuItem(MENU_ITEM_ID_DELETE, deleteBitmap), MenuAlign.MENU_ALIGN_LEFT);
+    }
+
+    private void InitializeSelectorPaint() {
+        // Initialize and set selector paint, thin dashed.
+        mSelectionRectPaint = new Paint();
+        mSelectionRectPaint.setColor(Color.BLACK);
+        mSelectionRectPaint.setAlpha(150);
+        mSelectionRectPaint.setStyle(Paint.Style.STROKE);
+        mSelectionRectPaint.setStrokeWidth(2);
+        mSelectionRectPaint.setStrokeCap(Paint.Cap.SQUARE);
+        mSelectionRectPaint.setStrokeJoin(Paint.Join.BEVEL);
+        mSelectionRectPaint.setAntiAlias(true);
+        mSelectionRectPaint.setDither(true);
+        mSelectionRectPaint.setPathEffect(new DashPathEffect(new float [] {10, 10}, 0));
     }
 }

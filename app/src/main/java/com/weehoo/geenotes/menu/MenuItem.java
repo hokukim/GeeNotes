@@ -18,7 +18,7 @@ public class MenuItem {
         return mId;
     }
 
-    public Bitmap getmBitmap() {
+    public Bitmap getBitmap() {
         return mBitmap;
     }
 }

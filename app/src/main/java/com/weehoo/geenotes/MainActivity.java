@@ -24,11 +24,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //mTool = new PenTool();
-        mTool = new SelectorTool();
-
         mCanvasView = new CanvasView(this);
         setContentView(mCanvasView);
+
+        mTool = new SelectorTool(this);
     }
 
     /**
