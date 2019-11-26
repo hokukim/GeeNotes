@@ -38,6 +38,7 @@ public class Menu {
      */
     public void addItem(MenuItem menuItem, MenuAlignType menuAlign) {
         // Create new menu item with scaled bitmap.
+        // Bitmap is scaled so it fits in the menu item rect.
         MenuItem scaledMenuItem = new MenuItem(menuItem.getType(), Bitmap.createScaledBitmap(menuItem.getBitmap(), (int)MENU_ITEM_WIDTH, (int)MENU_ITEM_HEIGHT, false));
 
         switch (menuAlign) {
@@ -69,7 +70,7 @@ public class Menu {
             else if (mRightItems != null && mRightItems.size() > 0 &&
                     point.x <= mRect.right && point.x >= mRect.right - (mRightItems.size() * MENU_ITEM_WIDTH)) {
                 // Event occurred in right menu.
-                int index = (int)(mRightItems.size() - ((mRect.right - point.x) / MENU_ITEM_WIDTH));
+                int index = (int)((point.x - (mRect.right - (mRightItems.size() * MENU_ITEM_WIDTH))) / MENU_ITEM_WIDTH);
                 menuItem = mRightItems.get(index);
             }
         }
@@ -126,7 +127,7 @@ public class Menu {
             waiters.add(waiter);
         }
 
-        // Wait for threads to finish (die).
+        // Wait for drawing threads to finish.
         for (Thread waiter : waiters) {
             try {
                 waiter.join();

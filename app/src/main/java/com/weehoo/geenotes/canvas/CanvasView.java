@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.view.View;
 
 public class CanvasView extends View {
@@ -42,24 +43,28 @@ public class CanvasView extends View {
         this.initializePaints();
     }
 
+    public void movePrimaryBitmap(RectF fromRect, RectF toRect) {
+        int i = 0;
+    }
+
     /**
      * Clears the overlay bitmap.
      */
-    public void ClearOverlay() {
+    public void clearOverlay() {
         mOverlayBitmap.eraseColor(Color.TRANSPARENT);
     }
 
     /**
      * Clears the primary bitmap.
      */
-    public void ClearPrimary() {
+    public void clearPrimary() {
         mPrimaryBitmap.eraseColor(Color.TRANSPARENT);
     }
 
     /**
      * Clears the background bitmap.
      */
-    public void ClearBackground() {
+    public void clearBackground() {
         mBackgroundBitmap.eraseColor(Color.TRANSPARENT);
     }
 
@@ -73,9 +78,9 @@ public class CanvasView extends View {
         super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
-        canvas.drawBitmap(mBackgroundBitmap, mXOffset, mYOffset, backgroundPaint);
-        canvas.drawBitmap(mPrimaryBitmap, mXOffset, mYOffset, primaryPaint);
-        canvas.drawBitmap(mOverlayBitmap, mXOffset, mYOffset, overlayPaint);
+        canvas.drawBitmap(mBackgroundBitmap, mXOffset - 8, mYOffset + 16, backgroundPaint);
+        canvas.drawBitmap(mPrimaryBitmap, mXOffset - 8, mYOffset + 16, primaryPaint);
+        canvas.drawBitmap(mOverlayBitmap, mXOffset - 8, mYOffset + 16, overlayPaint);
     }
 
     /**

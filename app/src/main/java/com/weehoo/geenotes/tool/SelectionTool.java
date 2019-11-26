@@ -28,10 +28,12 @@ public class SelectionTool implements ITool {
 
     // Menu.
     private Menu mMenu;
+    private MenuItem mActiveMenuItem;
 
     // Drawing.
     private Paint mSelectionRectPaint;
     private boolean mMenuIsOpen;
+    private Bitmap mEmptyBitmap;
 
     /**
      * Constructor.
@@ -43,6 +45,8 @@ public class SelectionTool implements ITool {
         mEndPoint = null;
         mSelectionRect = null;
         mMenuIsOpen = false;
+        mEmptyBitmap = null;
+        mActiveMenuItem = null;
 
         this.initializeSelectionMenu(context);
         this.initializeSelectionPaint();
@@ -57,18 +61,19 @@ public class SelectionTool implements ITool {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-
         PointF touchPoint = new PointF(event.getX(0), event.getY(0));
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
                 // Check if down action on a menu item.
-                MenuItem menuItem = this.getMenuItemSelected(touchPoint);
+                if (mMenuIsOpen) {
+                    MenuItem menuItem = this.getMenuItemSelected(touchPoint);
 
-                if (menuItem != null) {
-                    // Ignore this event.
-                    // Menu items do not respond to down events.
-                    return true;
+                    if (menuItem != null) {
+                        // Save the menu item as being active.
+                        mActiveMenuItem = menuItem;
+                        return false; // Event handled, nothing to redraw.
+                    }
                 }
 
                 // Menu item was not used.
@@ -82,30 +87,36 @@ public class SelectionTool implements ITool {
                 }
             } break;
             case MotionEvent.ACTION_UP: {
-                // Check if up action on a menu item.
+                // Check if Up action on a menu item.
                 MenuItem menuItem = this.getMenuItemSelected(touchPoint);
 
-                if (menuItem != null) {
-                    switch (menuItem.getType()) {
+                if (menuItem != null && mActiveMenuItem != null &&
+                        menuItem.getType() == mActiveMenuItem.getType()) {
+                    // Up action occurred on the active menu item.
+                    // Process this action for the menu item.
+                    switch(menuItem.getType()) {
                         case MENU_ITEM_TYPE_CANCEL: {
                             // Clear selection UI.
                             this.onDeselect();
-
-                            return true;
-                        }
+                        } break;
                         case MENU_ITEM_TYPE_DELETE: {
-                            // Delete contents in selection rect.
+                            // Delete content in selection UI.
                             this.deleteSelection();
 
                             // Clear selection UI.
                             this.onDeselect();
-
-                            return true;
                         }
                     }
+
+                    // Menu Up action has been handled.
+                    // Reset the active menu item, and stop processing.
+                    mActiveMenuItem = null;
+                    return true;
                 }
 
                 // Menu item was not used.
+                mActiveMenuItem = null;
+
                 // Process touch event.
                 if (mEndPoint == null) {
                     // End new selection rectangle.
@@ -115,17 +126,62 @@ public class SelectionTool implements ITool {
                 // Draw selector UI.
                 this.drawSelectionUI();
 
-                // Reset points so a new selection can be drawn.
-                mStartPoint = null;
-                mEndPoint = null;
+                // Pre-create an empty bitmap which can be used for various menu actions.
+                // Create an empty bitmap with the same size as the selection rect.
+                mEmptyBitmap = Bitmap.createBitmap((int)(mSelectionRect.right - mSelectionRect.left + 1),
+                        (int)(mSelectionRect.bottom - mSelectionRect.top + 1),
+                        mCanvasView.bitmapConfig);
             } break;
             case MotionEvent.ACTION_MOVE: {
+                // Check if currently moving selection.
+                if (mActiveMenuItem != null && mActiveMenuItem.getType() == MenuItemType.MENU_ITEM_TYPE_MOVE) {
+                    // Selection is being moved.
+                    // Calculate amount to move.
+                    int lastPos = event.getHistorySize() - 1;
+                    if (lastPos <= 0) {
+                        break;
+                    }
+
+                    float xDiff = touchPoint.x - event.getHistoricalX(0);
+                    float yDiff = touchPoint.y - event.getHistoricalY(0);
+
+                    // Move contents in selection UI.
+                    RectF toRect = new RectF(mSelectionRect.left + xDiff,
+                            mSelectionRect.top + yDiff,
+                            mSelectionRect.right + xDiff,
+                            mSelectionRect.bottom + yDiff);
+                    mCanvasView.movePrimaryBitmap(mSelectionRect, toRect);
+
+                    // Move selection UI and redraw.
+                    mStartPoint = new PointF(toRect.left, toRect.top);
+                    mEndPoint = new PointF(toRect.right, toRect.bottom);
+
+                    mCanvasView.clearOverlay();
+                    this.drawSelectionUI(true);
+
+                    return true;
+                }
+
+                // Check if Move action on a menu item.
+                MenuItem menuItem = this.getMenuItemSelected(touchPoint);
+
+                if (menuItem != null && menuItem.getType() == mActiveMenuItem.getType()) {
+                    switch (menuItem.getType()) {
+                        case MENU_ITEM_TYPE_CANCEL:
+                        case MENU_ITEM_TYPE_DELETE: {
+                            // Do nothing.
+                            return false;
+                        }
+                    }
+                }
+
+                // Menu item was not used.
+                // Continue expanding selection UI rect without menu.
+                // Clear overlay, removing previous selection UI rect.
+                mCanvasView.clearOverlay();
+
+                // Draw new selection UI without menu.
                 mEndPoint = touchPoint;
-
-                // Clear overlay, removing previous selection UI.
-                mCanvasView.ClearOverlay();
-
-                // Draw selector UI.
                 this.drawSelectionUI(false);
             } break;
         }
@@ -142,7 +198,7 @@ public class SelectionTool implements ITool {
     @Override
     public void onDeselect() {
         // Clear selector rectangle.
-        mCanvasView.ClearOverlay();
+        mCanvasView.clearOverlay();
 
         // Reset start and end rect points.
         mStartPoint = null;
@@ -155,12 +211,7 @@ public class SelectionTool implements ITool {
      * Delete contents in selection rect.
      */
     private void deleteSelection() {
-        // Create an empty bitmap with the same size as the selection rect.
-        Bitmap emptyBitmap = Bitmap.createBitmap((int)(mSelectionRect.right - mSelectionRect.left + 1),
-                                                 (int)(mSelectionRect.bottom - mSelectionRect.top + 1),
-                                                  mCanvasView.bitmapConfig);
-
-        mCanvasView.primaryCanvas.drawBitmap(emptyBitmap, null, mSelectionRect, null);
+        mCanvasView.primaryCanvas.drawBitmap(mEmptyBitmap, null, mSelectionRect, null);
     }
 
     /**
@@ -200,6 +251,10 @@ public class SelectionTool implements ITool {
      * @return Menu item selected, or null if a menu item does not exist at the point.
      */
     private MenuItem getMenuItemSelected(PointF point) {
+        if (!mMenuIsOpen) {
+            return null;
+        }
+
         MenuItem menuItem = null;
 
         if (mMenuIsOpen) {
