@@ -7,6 +7,9 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 
@@ -33,7 +36,7 @@ public class SelectionTool implements ITool {
     // Drawing.
     private Paint mSelectionRectPaint;
     private boolean mMenuIsOpen;
-    private Bitmap mEmptyBitmap;
+    private Bitmap mCopiedBitmap;
 
     /**
      * Constructor.
@@ -45,7 +48,7 @@ public class SelectionTool implements ITool {
         mEndPoint = null;
         mSelectionRect = null;
         mMenuIsOpen = false;
-        mEmptyBitmap = null;
+        mCopiedBitmap = null;
         mActiveMenuItem = null;
 
         this.initializeSelectionMenu(context);
@@ -54,9 +57,9 @@ public class SelectionTool implements ITool {
 
     /**
      * Called when a touch screen event needs to be handled by the input object.
-     * Input object should draw to the bitmap.
+     * Input object should draw to the canvas bitmap.
      *
-     * @param event      The touch screen event being processed.
+     * @param event The touch screen event being processed.
      * @return Return true if you have consumed the event, false if you haven't.
      */
     @Override
@@ -72,6 +75,21 @@ public class SelectionTool implements ITool {
                     if (menuItem != null) {
                         // Save the menu item as being active.
                         mActiveMenuItem = menuItem;
+
+                        if (menuItem.getType() == MenuItemType.MENU_ITEM_TYPE_MOVE) {
+                            // Cut selection from primary canvas.
+                            // Store selection for moving; selection will be redrawn to the primary canvas when moving is complete.
+                            Rect rect = new Rect();
+                            mSelectionRect.round(rect);
+                            mCopiedBitmap = mCanvasView.copyPrimaryBitmap(rect);
+
+                            // Draw to copied bitmap to overlay.
+                            mCanvasView.overlayCanvas.drawBitmap(mCopiedBitmap, null, mSelectionRect, null);
+
+                            // Remove copied bitmap from primary.
+                            this.deleteSelection();
+                        }
+
                         return false; // Event handled, nothing to redraw.
                     }
                 }
@@ -87,6 +105,16 @@ public class SelectionTool implements ITool {
                 }
             } break;
             case MotionEvent.ACTION_UP: {
+                if (mActiveMenuItem != null && mActiveMenuItem.getType() == MenuItemType.MENU_ITEM_TYPE_MOVE) {
+                    // Selection moving is complete.
+                    // Draw copied bitmap back to primary.
+                    mCanvasView.primaryCanvas.drawBitmap(mCopiedBitmap, null, mSelectionRect, mCanvasView.primaryPaint);
+                    mCopiedBitmap = null;
+                    mActiveMenuItem = null;
+
+                    return true;
+                }
+
                 // Check if Up action on a menu item.
                 MenuItem menuItem = this.getMenuItemSelected(touchPoint);
 
@@ -105,13 +133,13 @@ public class SelectionTool implements ITool {
 
                             // Clear selection UI.
                             this.onDeselect();
-                        }
+                        } break;
                     }
 
                     // Menu Up action has been handled.
                     // Reset the active menu item, and stop processing.
                     mActiveMenuItem = null;
-                    return true;
+                    return true; // Redraw.
                 }
 
                 // Menu item was not used.
@@ -125,12 +153,6 @@ public class SelectionTool implements ITool {
 
                 // Draw selector UI.
                 this.drawSelectionUI();
-
-                // Pre-create an empty bitmap which can be used for various menu actions.
-                // Create an empty bitmap with the same size as the selection rect.
-                mEmptyBitmap = Bitmap.createBitmap((int)(mSelectionRect.right - mSelectionRect.left + 1),
-                        (int)(mSelectionRect.bottom - mSelectionRect.top + 1),
-                        mCanvasView.bitmapConfig);
             } break;
             case MotionEvent.ACTION_MOVE: {
                 // Check if currently moving selection.
@@ -150,7 +172,6 @@ public class SelectionTool implements ITool {
                             mSelectionRect.top + yDiff,
                             mSelectionRect.right + xDiff,
                             mSelectionRect.bottom + yDiff);
-                    mCanvasView.movePrimaryBitmap(mSelectionRect, toRect);
 
                     // Move selection UI and redraw.
                     mStartPoint = new PointF(toRect.left, toRect.top);
@@ -159,7 +180,7 @@ public class SelectionTool implements ITool {
                     mCanvasView.clearOverlay();
                     this.drawSelectionUI(true);
 
-                    return true;
+                    return true; // Redraw.
                 }
 
                 // Check if Move action on a menu item.
@@ -170,7 +191,7 @@ public class SelectionTool implements ITool {
                         case MENU_ITEM_TYPE_CANCEL:
                         case MENU_ITEM_TYPE_DELETE: {
                             // Do nothing.
-                            return false;
+                            return false; // Nothing to redraw.
                         }
                     }
                 }
@@ -186,7 +207,7 @@ public class SelectionTool implements ITool {
             } break;
         }
 
-        return true;
+        return true; // Redraw.
     }
 
     /**
@@ -204,6 +225,7 @@ public class SelectionTool implements ITool {
         mStartPoint = null;
         mEndPoint = null;
         mSelectionRect = null;
+
         mMenuIsOpen = false;
     }
 
@@ -211,7 +233,9 @@ public class SelectionTool implements ITool {
      * Delete contents in selection rect.
      */
     private void deleteSelection() {
-        mCanvasView.primaryCanvas.drawBitmap(mEmptyBitmap, null, mSelectionRect, null);
+        Paint clearPaint = new Paint();
+        clearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        mCanvasView.primaryCanvas.drawRect(mSelectionRect, clearPaint);
     }
 
     /**
@@ -243,6 +267,12 @@ public class SelectionTool implements ITool {
             mMenu.draw(mCanvasView.overlayCanvas, menuRect, MenuAnchorType.MENU_ANCHOR_BOTTOM, mSelectionRectPaint);
             mMenuIsOpen = true;
         }
+
+        // Copied bitmap while moving selection.
+        if (mActiveMenuItem != null && mActiveMenuItem.getType() == MenuItemType.MENU_ITEM_TYPE_MOVE && mCopiedBitmap != null) {
+            // Draw copied bitmap to overlay for moving.
+            mCanvasView.overlayCanvas.drawBitmap(mCopiedBitmap, null, mSelectionRect, null);
+        }
     }
 
     /**
@@ -263,6 +293,7 @@ public class SelectionTool implements ITool {
 
         return menuItem;
     }
+
     private void initializeSelectionMenu(Context context) {
         // Initialize selector menu.
         mMenu = new Menu();

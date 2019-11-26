@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.Rect;
 import android.view.View;
 
 public class CanvasView extends View {
@@ -43,10 +43,6 @@ public class CanvasView extends View {
         this.initializePaints();
     }
 
-    public void movePrimaryBitmap(RectF fromRect, RectF toRect) {
-        int i = 0;
-    }
-
     /**
      * Clears the overlay bitmap.
      */
@@ -69,6 +65,15 @@ public class CanvasView extends View {
     }
 
     /**
+     * Gets a copy of the primary drawing within the specified rect.
+     * @param rect Rectangle.
+     * @return Bitmap copy.
+     */
+    public Bitmap copyPrimaryBitmap(Rect rect) {
+        return Bitmap.createBitmap(mPrimaryBitmap, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
+    }
+
+    /**
      * Draw on canvas.
      *
      * @param canvas The view canvas on which to draw.
@@ -78,9 +83,9 @@ public class CanvasView extends View {
         super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
-        canvas.drawBitmap(mBackgroundBitmap, mXOffset - 8, mYOffset + 16, backgroundPaint);
-        canvas.drawBitmap(mPrimaryBitmap, mXOffset - 8, mYOffset + 16, primaryPaint);
-        canvas.drawBitmap(mOverlayBitmap, mXOffset - 8, mYOffset + 16, overlayPaint);
+        canvas.drawBitmap(mBackgroundBitmap, mXOffset - 8, mYOffset + 12, backgroundPaint);
+        canvas.drawBitmap(mPrimaryBitmap, mXOffset - 8, mYOffset + 12, primaryPaint);
+        canvas.drawBitmap(mOverlayBitmap, mXOffset - 8, mYOffset + 12, overlayPaint);
     }
 
     /**
