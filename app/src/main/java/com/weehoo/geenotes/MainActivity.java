@@ -9,7 +9,7 @@ import android.view.MenuItem;
 
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.tool.ITool;
-import com.weehoo.geenotes.tool.PenTool;
+import com.weehoo.geenotes.tool.SelectionTool;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,14 +19,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mTool = new PenTool();
-
         mCanvasView = new CanvasView(this);
         setContentView(mCanvasView);
+
+        mTool = new SelectionTool(this, mCanvasView);
     }
 
     /**
@@ -44,9 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
         for (int i = 0; i < event.getPointerCount(); i++) {
             switch (event.getToolType(i)) {
+                case MotionEvent.TOOL_TYPE_FINGER:
                 case MotionEvent.TOOL_TYPE_STYLUS: {
                     // Send input event to input object.)
-                    drawingChanged = mTool.onTouchEvent(event, mCanvasView);
+                    drawingChanged = mTool.onTouchEvent(event);
                 } break;
             }
         }

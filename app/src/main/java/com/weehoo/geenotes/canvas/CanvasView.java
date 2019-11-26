@@ -5,9 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.View;
 
 public class CanvasView extends View {
+    public final Bitmap.Config bitmapConfig;
 
     public Canvas backgroundCanvas;
     public Canvas primaryCanvas;
@@ -22,8 +24,8 @@ public class CanvasView extends View {
     private final float mYOffset = -81;
 
     // Store an internal canvas with bitmaps.
-    // Draw onto internal bitmaps through an internal canvas,
-    // Then draw the bitmaps to the UI canvas view.
+    //  Draw onto internal bitmaps through an internal canvas,
+    //  Then draw the bitmaps to the UI canvas view.
     private Bitmap mBackgroundBitmap;
     private Bitmap mPrimaryBitmap;
     private Bitmap mOverlayBitmap;
@@ -35,6 +37,8 @@ public class CanvasView extends View {
     public CanvasView(Context context) {
         super(context);
 
+        bitmapConfig = Bitmap.Config.ARGB_8888;
+
         // Initialize paints.
         this.initializePaints();
     }
@@ -42,22 +46,31 @@ public class CanvasView extends View {
     /**
      * Clears the overlay bitmap.
      */
-    public void ClearOverlay() {
+    public void clearOverlay() {
         mOverlayBitmap.eraseColor(Color.TRANSPARENT);
     }
 
     /**
      * Clears the primary bitmap.
      */
-    public void ClearPrimary() {
+    public void clearPrimary() {
         mPrimaryBitmap.eraseColor(Color.TRANSPARENT);
     }
 
     /**
      * Clears the background bitmap.
      */
-    public void ClearBackground() {
+    public void clearBackground() {
         mBackgroundBitmap.eraseColor(Color.TRANSPARENT);
+    }
+
+    /**
+     * Gets a copy of the primary drawing within the specified rect.
+     * @param rect Rectangle.
+     * @return Bitmap copy.
+     */
+    public Bitmap copyPrimaryBitmap(Rect rect) {
+        return Bitmap.createBitmap(mPrimaryBitmap, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top);
     }
 
     /**
@@ -70,9 +83,9 @@ public class CanvasView extends View {
         super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
-        canvas.drawBitmap(mBackgroundBitmap, 0, 0, backgroundPaint);
-        canvas.drawBitmap(mPrimaryBitmap, 0, 0, primaryPaint);
-        canvas.drawBitmap(mOverlayBitmap, 0, 0, overlayPaint);
+        canvas.drawBitmap(mBackgroundBitmap, mXOffset - 4, mYOffset, backgroundPaint);
+        canvas.drawBitmap(mPrimaryBitmap, mXOffset - 4, mYOffset, primaryPaint);
+        canvas.drawBitmap(mOverlayBitmap, mXOffset - 4, mYOffset, overlayPaint);
     }
 
     /**
@@ -90,15 +103,15 @@ public class CanvasView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         // Set background canvas with bitmap.
-        mBackgroundBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mBackgroundBitmap = Bitmap.createBitmap(w, h, bitmapConfig);
         backgroundCanvas = new Canvas(mBackgroundBitmap);
 
         // Set primary canvas with bitmap.
-        mPrimaryBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mPrimaryBitmap = Bitmap.createBitmap(w, h, bitmapConfig);
         primaryCanvas = new Canvas(mPrimaryBitmap);
 
         // Set overlay canvas with bitmap.
-        mOverlayBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        mOverlayBitmap = Bitmap.createBitmap(w, h, bitmapConfig);
         overlayCanvas = new Canvas(mOverlayBitmap);
     }
 
@@ -108,7 +121,7 @@ public class CanvasView extends View {
     private void initializePaints() {
         // Background paint.
         backgroundPaint = new Paint();
-        backgroundPaint.setColor(Color.LTGRAY);
+        backgroundPaint.setColor(Color.BLACK);
         backgroundPaint.setStyle(Paint.Style.STROKE);
         backgroundPaint.setStrokeWidth(1);
         backgroundPaint.setStrokeCap(Paint.Cap.SQUARE);
@@ -128,7 +141,7 @@ public class CanvasView extends View {
 
         // Overlay paint.
         overlayPaint = new Paint();
-        overlayPaint.setColor(Color.GRAY);
+        overlayPaint.setColor(Color.BLACK);
         overlayPaint.setStyle(Paint.Style.STROKE);
         overlayPaint.setStrokeWidth(2);
         overlayPaint.setStrokeCap(Paint.Cap.SQUARE);
