@@ -83,9 +83,9 @@ public class CanvasView extends View {
         super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
-        canvas.drawBitmap(mBackgroundBitmap, mXOffset - 8, mYOffset + 12, backgroundPaint);
-        canvas.drawBitmap(mPrimaryBitmap, mXOffset - 8, mYOffset + 12, primaryPaint);
-        canvas.drawBitmap(mOverlayBitmap, mXOffset - 8, mYOffset + 12, overlayPaint);
+        canvas.drawBitmap(mBackgroundBitmap, mXOffset - 4, mYOffset, backgroundPaint);
+        canvas.drawBitmap(mPrimaryBitmap, mXOffset - 4, mYOffset, primaryPaint);
+        canvas.drawBitmap(mOverlayBitmap, mXOffset - 4, mYOffset, overlayPaint);
     }
 
     /**
