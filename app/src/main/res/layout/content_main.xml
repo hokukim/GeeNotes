@@ -8,8 +8,10 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <View
+    <com.weehoo.geenotes.canvas.CanvasView
+        android:id="@+id/canvas_view"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

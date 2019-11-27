@@ -1,11 +1,13 @@
 package com.weehoo.geenotes.canvas;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.AttributeSet;
 import android.view.View;
 
 public class CanvasView extends View {
@@ -20,8 +22,8 @@ public class CanvasView extends View {
     public Paint overlayPaint;
 
     // Temp: Adjust coordinates to account for device UI.
-    private final float mXOffset = 6;
-    private final float mYOffset = -81;
+    private final float mXOffset = 2; // TODO: Why?
+    private float mYOffset;
 
     // Store an internal canvas with bitmaps.
     //  Draw onto internal bitmaps through an internal canvas,
@@ -33,11 +35,13 @@ public class CanvasView extends View {
     /**
      * Constructor.
      * @param context App context.
+     * @param attrs Attribute set.
      */
-    public CanvasView(Context context) {
-        super(context);
+    public CanvasView(Context context, AttributeSet attrs) {
+        super(context, attrs);
 
         bitmapConfig = Bitmap.Config.ARGB_8888;
+        mYOffset = 0;
 
         // Initialize paints.
         this.initializePaints();
@@ -83,9 +87,9 @@ public class CanvasView extends View {
         super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
-        canvas.drawBitmap(mBackgroundBitmap, mXOffset - 4, mYOffset, backgroundPaint);
-        canvas.drawBitmap(mPrimaryBitmap, mXOffset - 4, mYOffset, primaryPaint);
-        canvas.drawBitmap(mOverlayBitmap, mXOffset - 4, mYOffset, overlayPaint);
+        canvas.drawBitmap(mBackgroundBitmap, mXOffset, mYOffset, backgroundPaint);
+        canvas.drawBitmap(mPrimaryBitmap, mXOffset, mYOffset, primaryPaint);
+        canvas.drawBitmap(mOverlayBitmap, mXOffset, mYOffset, overlayPaint);
     }
 
     /**
@@ -101,6 +105,11 @@ public class CanvasView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+
+        // Set vertical offset, possibly due to toolbars.
+        mYOffset = h - Resources.getSystem().getDisplayMetrics().heightPixels;
+        mYOffset -= 80; // TODO: Ugh @ e-pad UI. Need to find a solution to this...
+
 
         // Set background canvas with bitmap.
         mBackgroundBitmap = Bitmap.createBitmap(w, h, bitmapConfig);
