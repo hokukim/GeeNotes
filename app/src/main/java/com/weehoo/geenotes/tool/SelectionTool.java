@@ -68,10 +68,6 @@ public class SelectionTool implements ITool {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
-
-
-                mCanvasView.primaryCanvas.drawLine(0, 0, 1000, 1000, mCanvasView.primaryPaint);
-
                 // Check if down action on a menu item.
                 if (mMenuIsOpen) {
                     MenuItem menuItem = this.getMenuItemSelected(touchPoint);

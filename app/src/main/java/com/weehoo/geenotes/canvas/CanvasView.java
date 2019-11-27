@@ -22,7 +22,7 @@ public class CanvasView extends View {
     public Paint overlayPaint;
 
     // Temp: Adjust coordinates to account for device UI.
-    private final float mXOffset = 2;
+    private final float mXOffset = 2; // TODO: Why?
     private float mYOffset;
 
     // Store an internal canvas with bitmaps.
@@ -108,6 +108,8 @@ public class CanvasView extends View {
 
         // Set vertical offset, possibly due to toolbars.
         mYOffset = h - Resources.getSystem().getDisplayMetrics().heightPixels;
+        mYOffset -= 80; // TODO: Ugh @ e-pad UI. Need to find a solution to this...
+
 
         // Set background canvas with bitmap.
         mBackgroundBitmap = Bitmap.createBitmap(w, h, bitmapConfig);
