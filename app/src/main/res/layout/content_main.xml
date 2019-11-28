@@ -11,7 +11,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="createNote"
-        android:text="+ Note" />
+        android:onClick="startNoteActivity"
+        android:text="@string/button_add_note" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
      * Starts Note activity for creating a new note.
      * @param view The view for which the event is being handled.
      */
-    public void createNote(View view) {
+    public void startNoteActivity(View view) {
         // Start note activity.
         Intent intent = new Intent(this, NoteActivity.class);
         startActivity(intent);
