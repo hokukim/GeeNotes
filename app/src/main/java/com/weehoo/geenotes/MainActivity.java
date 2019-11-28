@@ -1,66 +1,33 @@
 package com.weehoo.geenotes;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.weehoo.geenotes.canvas.CanvasView;
-import com.weehoo.geenotes.tool.ITool;
-import com.weehoo.geenotes.tool.SelectionTool;
+import android.view.View;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
-
-    private CanvasView mCanvasView;
-    private ITool mTool;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
-
-        // Set canvas view and default tool.
-        mCanvasView = findViewById(R.id.canvas_view);
-        mTool = new SelectionTool(this, mCanvasView);
     }
 
     /**
-     * Called when a touch screen event was not handled by any of the views
-     * under it.  This is most useful to process touch events that happen
-     * outside of your window bounds, where there is no view to receive it.
-     *
-     * @param event The touch screen event being processed.
-     * @return Return true if you have consumed the event, false if you haven't.
-     * The default implementation always returns false.
+     * + Note button click event handler.
+     * Starts Note activity for creating a new note.
+     * @param view The view for which the event is being handled.
      */
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        boolean drawingChanged = false;
-
-        for (int i = 0; i < event.getPointerCount(); i++) {
-            switch (event.getToolType(i)) {
-                case MotionEvent.TOOL_TYPE_FINGER:
-                case MotionEvent.TOOL_TYPE_STYLUS: {
-                    // Send input event to input object.)
-                    drawingChanged = mTool.onTouchEvent(event);
-                } break;
-            }
-        }
-
-        if (drawingChanged) {
-            // Drawing has changed.
-            // Invalidate view so it can be redrawn.
-            mCanvasView.invalidate();
-        }
-
-        return true;
+    public void createNote(View view) {
+        // Start note activity.
+        Intent intent = new Intent(this, NoteActivity.class);
+        startActivity(intent);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
