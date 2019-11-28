@@ -107,9 +107,9 @@ public class CanvasView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
 
         // Set vertical offset, possibly due to toolbars.
-        mYOffset = h - Resources.getSystem().getDisplayMetrics().heightPixels;
-        mYOffset -= 80; // TODO: Ugh @ e-pad UI. Need to find a solution to this...
-
+        int[] loc = new int[2];
+        getLocationOnScreen(loc);
+        mYOffset = -loc[1];
 
         // Set background canvas with bitmap.
         mBackgroundBitmap = Bitmap.createBitmap(w, h, bitmapConfig);
