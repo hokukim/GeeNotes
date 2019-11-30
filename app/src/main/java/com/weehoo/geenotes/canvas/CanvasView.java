@@ -1,14 +1,16 @@
 package com.weehoo.geenotes.canvas;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.weehoo.geenotes.dimensions.StatusBar;
 
 public class CanvasView extends View {
     public final Bitmap.Config bitmapConfig;
@@ -21,16 +23,14 @@ public class CanvasView extends View {
     public Paint primaryPaint;
     public Paint overlayPaint;
 
-    // Temp: Adjust coordinates to account for device UI.
-    private final float mXOffset = 2; // TODO: Why?
-    private float mYOffset;
-
     // Store an internal canvas with bitmaps.
     //  Draw onto internal bitmaps through an internal canvas,
     //  Then draw the bitmaps to the UI canvas view.
     private Bitmap mBackgroundBitmap;
     private Bitmap mPrimaryBitmap;
     private Bitmap mOverlayBitmap;
+
+    private PointF mInputOffsets;
 
     /**
      * Constructor.
@@ -40,10 +40,10 @@ public class CanvasView extends View {
     public CanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        bitmapConfig = Bitmap.Config.ARGB_8888;
-        mYOffset = 0;
+        mInputOffsets = new PointF(0, 0);
 
         // Initialize paints.
+        bitmapConfig = Bitmap.Config.ARGB_8888;
         this.initializePaints();
     }
 
@@ -78,6 +78,13 @@ public class CanvasView extends View {
     }
 
     /**
+     * Get input offsets due to status bar, toolbars, etc.
+     */
+    public PointF getInputOffsets() {
+        return mInputOffsets;
+    }
+
+    /**
      * Draw on canvas.
      *
      * @param canvas The view canvas on which to draw.
@@ -87,9 +94,10 @@ public class CanvasView extends View {
         super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
-        canvas.drawBitmap(mBackgroundBitmap, mXOffset, mYOffset, backgroundPaint);
-        canvas.drawBitmap(mPrimaryBitmap, mXOffset, mYOffset, primaryPaint);
-        canvas.drawBitmap(mOverlayBitmap, mXOffset, mYOffset, overlayPaint);
+        mBackgroundBitmap.eraseColor(Color.CYAN);
+        canvas.drawBitmap(mBackgroundBitmap, 0, 0, backgroundPaint);
+        canvas.drawBitmap(mPrimaryBitmap, 0, 0, primaryPaint);
+        canvas.drawBitmap(mOverlayBitmap, 0, 0, overlayPaint);
     }
 
     /**
@@ -106,10 +114,11 @@ public class CanvasView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        // Set vertical offset, possibly due to toolbars.
+        // Set adjusted height, possibly due to toolbars.
         int[] loc = new int[2];
         getLocationOnScreen(loc);
-        mYOffset = -loc[1];
+        h -= (loc[1] - StatusBar.getStatusBarHeight());
+        mInputOffsets.y = loc[1] ;
 
         // Set background canvas with bitmap.
         mBackgroundBitmap = Bitmap.createBitmap(w, h, bitmapConfig);

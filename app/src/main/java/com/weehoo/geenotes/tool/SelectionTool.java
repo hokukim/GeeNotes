@@ -29,6 +29,9 @@ public class SelectionTool implements ITool {
     private PointF mEndPoint;
     private RectF mSelectionRect;
 
+    // Input offsets.
+    private PointF mInputOffsets;
+
     // Menu.
     private Menu mMenu;
     private MenuItem mActiveMenuItem;
@@ -50,6 +53,7 @@ public class SelectionTool implements ITool {
         mMenuIsOpen = false;
         mCopiedBitmap = null;
         mActiveMenuItem = null;
+        mInputOffsets = new PointF(0 , 0);
 
         this.initializeSelectionMenu(context);
         this.initializeSelectionPaint();
@@ -65,6 +69,7 @@ public class SelectionTool implements ITool {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         PointF touchPoint = new PointF(event.getX(0), event.getY(0));
+        touchPoint.y -= mInputOffsets.y;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
@@ -227,6 +232,18 @@ public class SelectionTool implements ITool {
         mSelectionRect = null;
 
         mMenuIsOpen = false;
+    }
+
+    /**
+     * Adjusts input offsets due to status bar etc.
+     *
+     * @param x Input offset x.
+     * @param y Input offset y.
+     */
+    @Override
+    public void setInputOffsets(float x, float y) {
+        mInputOffsets.x = x;
+        mInputOffsets.y = y;
     }
 
     /**

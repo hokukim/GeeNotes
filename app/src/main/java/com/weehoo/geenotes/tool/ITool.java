@@ -16,4 +16,11 @@ public interface ITool {
      * Called when the tool is deselected as the primary drawing tool.
      */
     void onDeselect();
+
+    /**
+     * Adjusts input offsets due to status bar etc.
+     * @param x Input offset x.
+     * @param y Input offset y.
+     */
+    void setInputOffsets(float x, float y);
 }

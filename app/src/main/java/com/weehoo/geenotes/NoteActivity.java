@@ -1,15 +1,20 @@
 package com.weehoo.geenotes;
 
+import android.graphics.PointF;
+import android.graphics.Rect;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 
 import com.weehoo.geenotes.canvas.CanvasView;
+import com.weehoo.geenotes.dimensions.StatusBar;
 import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.SelectionTool;
 
@@ -33,6 +38,8 @@ public class NoteActivity extends AppCompatActivity {
         // Set canvas view and default tool.
         mCanvasView = findViewById(R.id.canvas_view);
         mTool = new SelectionTool(this, mCanvasView);
+
+        int yOffset = StatusBar.getStatusBarHeight();
     }
 
     /**
@@ -46,6 +53,10 @@ public class NoteActivity extends AppCompatActivity {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        // Adjust event input by canvas input offsets.
+        PointF inputOffsets = mCanvasView.getInputOffsets();
+        event.offsetLocation(inputOffsets.x, -inputOffsets.y);
+
         boolean drawingChanged = false;
 
         for (int i = 0; i < event.getPointerCount(); i++) {
