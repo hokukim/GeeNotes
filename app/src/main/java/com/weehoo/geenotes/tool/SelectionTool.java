@@ -1,6 +1,6 @@
 package com.weehoo.geenotes.tool;
 
-import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -13,6 +13,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.MotionEvent;
 
+import com.weehoo.geenotes.GeeNotesApplication;
 import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.menu.Menu;
@@ -29,6 +30,9 @@ public class SelectionTool implements ITool {
     private PointF mEndPoint;
     private RectF mSelectionRect;
 
+    // Input offsets.
+    private PointF mInputOffsets;
+
     // Menu.
     private Menu mMenu;
     private MenuItem mActiveMenuItem;
@@ -41,18 +45,27 @@ public class SelectionTool implements ITool {
     /**
      * Constructor.
      */
-    public SelectionTool(Context context, CanvasView canvasView) {
-        mCanvasView = canvasView;
-
+    public SelectionTool() {
         mStartPoint = null;
         mEndPoint = null;
         mSelectionRect = null;
         mMenuIsOpen = false;
         mCopiedBitmap = null;
         mActiveMenuItem = null;
+        mInputOffsets = new PointF(0 , 0);
 
-        this.initializeSelectionMenu(context);
+        this.initializeSelectionMenu();
         this.initializeSelectionPaint();
+    }
+
+    /**
+     * Called when the tool is selected as the primary drawing tool.
+     *
+     * @param canvasView
+     */
+    @Override
+    public void onSelect(CanvasView canvasView) {
+        mCanvasView = canvasView;
     }
 
     /**
@@ -65,6 +78,7 @@ public class SelectionTool implements ITool {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         PointF touchPoint = new PointF(event.getX(0), event.getY(0));
+        touchPoint.y -= mInputOffsets.y;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
@@ -294,20 +308,22 @@ public class SelectionTool implements ITool {
         return menuItem;
     }
 
-    private void initializeSelectionMenu(Context context) {
+    private void initializeSelectionMenu() {
         // Initialize selector menu.
         mMenu = new Menu();
 
+        Resources resources = GeeNotesApplication.getContext().getResources();
+
         // Menu item: Cancel.
-        Bitmap cancelBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_selector_menu_cancel);
+        Bitmap cancelBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_selector_menu_cancel);
         mMenu.addItem(new MenuItem(MenuItemType.MENU_ITEM_TYPE_CANCEL, cancelBitmap), MenuAlignType.MENU_ALIGN_RIGHT);
 
         // Menu item: Move.
-        Bitmap moveBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_selector_menu_move);
+        Bitmap moveBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_selector_menu_move);
         mMenu.addItem(new MenuItem(MenuItemType.MENU_ITEM_TYPE_MOVE, moveBitmap), MenuAlignType.MENU_ALIGN_RIGHT);
 
         // Menu item: Delete.
-        Bitmap deleteBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_selector_menu_delete);
+        Bitmap deleteBitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_selector_menu_delete);
         mMenu.addItem(new MenuItem(MenuItemType.MENU_ITEM_TYPE_DELETE, deleteBitmap), MenuAlignType.MENU_ALIGN_LEFT);
     }
 

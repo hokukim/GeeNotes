@@ -8,10 +8,10 @@
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <com.weehoo.geenotes.canvas.CanvasView
-        android:id="@+id/canvas_view"
+    <Button
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        android:onClick="startNoteActivity"
+        android:text="@string/button_add_note" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,11 @@ public interface ITool {
     boolean onTouchEvent(MotionEvent event);
 
     /**
+     * Called when the tool is selected as the primary drawing tool.
+     */
+    void onSelect(CanvasView canvasView);
+
+    /**
      * Called when the tool is deselected as the primary drawing tool.
      */
     void onDeselect();

@@ -7,7 +7,13 @@ public class PenTool implements ITool {
 
     private CanvasView mCanvasView;
 
-    public PenTool(CanvasView canvasView) {
+    /**
+     * Called when the tool is selected as the primary drawing tool.
+     *
+     * @param canvasView
+     */
+    @Override
+    public void onSelect(CanvasView canvasView) {
         mCanvasView = canvasView;
     }
 
