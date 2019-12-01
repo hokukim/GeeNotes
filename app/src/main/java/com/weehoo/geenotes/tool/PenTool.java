@@ -39,15 +39,4 @@ public class PenTool implements ITool {
     public void onDeselect() {
         // Do nothing.
     }
-
-    /**
-     * Adjusts input offsets due to status bar etc.
-     *
-     * @param x Input offset x.
-     * @param y Input offset y.
-     */
-    @Override
-    public void setInputOffsets(float x, float y) {
-
-    }
 }

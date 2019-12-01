@@ -235,18 +235,6 @@ public class SelectionTool implements ITool {
     }
 
     /**
-     * Adjusts input offsets due to status bar etc.
-     *
-     * @param x Input offset x.
-     * @param y Input offset y.
-     */
-    @Override
-    public void setInputOffsets(float x, float y) {
-        mInputOffsets.x = x;
-        mInputOffsets.y = y;
-    }
-
-    /**
      * Delete contents in selection rect.
      */
     private void deleteSelection() {
