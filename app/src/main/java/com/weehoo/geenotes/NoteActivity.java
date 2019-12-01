@@ -16,6 +16,7 @@ import android.view.Window;
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dimensions.StatusBar;
 import com.weehoo.geenotes.tool.ITool;
+import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
 
 public class NoteActivity extends AppCompatActivity {
@@ -37,7 +38,8 @@ public class NoteActivity extends AppCompatActivity {
 
         // Set canvas view and default tool.
         mCanvasView = findViewById(R.id.canvas_view);
-        mTool = new SelectionTool(this, mCanvasView);
+        mTool = new PenTool();
+        mTool.onSelect(mCanvasView);
 
         int yOffset = StatusBar.getStatusBarHeight();
     }
@@ -78,11 +80,10 @@ public class NoteActivity extends AppCompatActivity {
         return true;
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.note_main, menu);
         return true;
     }
 
@@ -94,8 +95,21 @@ public class NoteActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_pen: {
+                mTool.onDeselect();
+                mTool = new PenTool();
+                mTool.onSelect(mCanvasView);
+            } break;
+            case R.id.action_select: {
+                mTool.onDeselect();
+                mTool = new SelectionTool();
+                mTool.onSelect(mCanvasView);
+            } break;
+            case android.R.id.home: {
+                mTool.onDeselect();
+                finish();
+            }
         }
 
         return super.onOptionsItemSelected(item);

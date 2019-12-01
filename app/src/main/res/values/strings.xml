@@ -7,4 +7,6 @@
     <string name="button_add_note">+ Note</string>
 
     <!-- Note activity -->
+    <string name="action_pen">Pen</string>
+    <string name="action_select">Select</string>
 </resources>
