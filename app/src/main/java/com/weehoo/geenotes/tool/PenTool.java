@@ -1,11 +1,13 @@
 package com.weehoo.geenotes.tool;
 
+import android.graphics.PointF;
 import android.view.MotionEvent;
 import com.weehoo.geenotes.canvas.CanvasView;
 
 public class PenTool implements ITool {
 
     private CanvasView mCanvasView;
+    private PointF mStartPoint;
 
     /**
      * Called when the tool is selected as the primary drawing tool.
@@ -15,6 +17,7 @@ public class PenTool implements ITool {
     @Override
     public void onSelect(CanvasView canvasView) {
         mCanvasView = canvasView;
+        mStartPoint = null;
     }
 
     /**
@@ -26,16 +29,32 @@ public class PenTool implements ITool {
      */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_MOVE) {
-            // Draw lines between batched historical points.
-            for (int j = 0; j < event.getHistorySize() - 1; j++) {
-                mCanvasView.primaryCanvas.drawLine(event.getHistoricalX(j), event.getHistoricalY(j),
-                                    event.getHistoricalX(j + 1), event.getHistoricalY(j + 1),
-                                    mCanvasView.primaryPaint);
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: {
+                mStartPoint = new PointF(event.getX(), event.getY());
+                mCanvasView.primaryCanvas.drawPoint(mStartPoint.x, mStartPoint.y, mCanvasView.primaryPaint);
+                return true;
+            }
+            case MotionEvent.ACTION_MOVE: {
+                // Draw lines between batched historical points.
+                for (int j = 0; j < event.getHistorySize() - 1; j++) {
+                    mCanvasView.primaryCanvas.drawLine(mStartPoint.x, mStartPoint.y,
+                            event.getHistoricalX(j + 1), event.getHistoricalY(j + 1),
+                            mCanvasView.primaryPaint);
+
+                    // Set start of next segment.
+                    mStartPoint.x = event.getHistoricalX(j + 1);
+                    mStartPoint.y = event.getHistoricalY(j + 1);
+                }
+                return true;
+            }
+            case MotionEvent.ACTION_UP: {
+                mStartPoint = null;
+                return false;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
