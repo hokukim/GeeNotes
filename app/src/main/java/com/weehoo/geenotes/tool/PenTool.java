@@ -36,6 +36,12 @@ public class PenTool implements ITool {
                 return true;
             }
             case MotionEvent.ACTION_MOVE: {
+                if (mStartPoint == null) {
+                    mStartPoint = new PointF(event.getX(), event.getY());
+                    mCanvasView.primaryCanvas.drawPoint(mStartPoint.x, mStartPoint.y, mCanvasView.primaryPaint);
+                    return true;
+                }
+
                 // Draw lines between batched historical points.
                 for (int j = 0; j < event.getHistorySize() - 1; j++) {
                     mCanvasView.primaryCanvas.drawLine(mStartPoint.x, mStartPoint.y,
