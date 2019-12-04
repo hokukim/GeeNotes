@@ -94,7 +94,6 @@ public class CanvasView extends View {
         super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
-        mBackgroundBitmap.eraseColor(Color.CYAN);
         canvas.drawBitmap(mBackgroundBitmap, 0, 0, backgroundPaint);
         canvas.drawBitmap(mPrimaryBitmap, 0, 0, primaryPaint);
         canvas.drawBitmap(mOverlayBitmap, 0, 0, overlayPaint);
