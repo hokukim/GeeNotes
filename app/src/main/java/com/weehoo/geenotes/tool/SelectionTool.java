@@ -244,6 +244,24 @@ public class SelectionTool implements ITool {
     }
 
     /**
+     * Called to get tool's active icon.
+     * @return This tool's active icon res.
+     */
+    @Override
+    public int getIconResActive() {
+        return R.drawable.ic_tool_menu_selection_active;
+    }
+
+    /**
+     * Called to get tool's inactive icon.
+     * @return This tool's inactive icon res.
+     */
+    @Override
+    public int getIconResInactive() {
+        return R.drawable.ic_tool_menu_selection_inactive;
+    }
+
+    /**
      * Delete contents in selection rect.
      */
     private void deleteSelection() {

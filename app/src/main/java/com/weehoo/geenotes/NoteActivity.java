@@ -19,10 +19,18 @@ import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+
 public class NoteActivity extends AppCompatActivity {
 
     private CanvasView mCanvasView;
+    private ArrayList<ITool> mTools;
+    private HashMap<Integer, ITool> mToolsMap;
     private ITool mTool;
+    private MenuItem mToolMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +44,14 @@ public class NoteActivity extends AppCompatActivity {
         actionBar.setDisplayShowTitleEnabled(false); // Do not show app title.
         actionBar.setDisplayHomeAsUpEnabled(true); // Display up button in place of home button.
 
+        // Register tools.
+        mTools = new ArrayList<>();
+        mToolsMap = new HashMap<>();
+        this.RegisterTools();
+
         // Set canvas view and default tool.
         mCanvasView = findViewById(R.id.canvas_view);
-        mTool = new PenTool();
+        mTool = mTools.get(0);
         mTool.onSelect(mCanvasView);
 
         int yOffset = StatusBar.getStatusBarHeight();
@@ -84,6 +97,18 @@ public class NoteActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.note_main, menu);
+
+        // Add tool menu items.
+        for (int i = 0; i < mTools.size(); i++) {
+            ITool tool = mTools.get(i);
+            int iconRes = i == 0 ? tool.getIconResActive() : tool.getIconResInactive();
+            menu.add(0, i, i, "")
+                .setIcon(iconRes)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
+
+        mToolMenuItem = menu.getItem(0);
+
         return true;
     }
 
@@ -94,24 +119,36 @@ public class NoteActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        switch (id) {
-            case R.id.action_pen: {
-                mTool.onDeselect();
-                mTool = new PenTool();
-                mTool.onSelect(mCanvasView);
-            } break;
-            case R.id.action_select: {
-                mTool.onDeselect();
-                mTool = new SelectionTool();
-                mTool.onSelect(mCanvasView);
-            } break;
-            case android.R.id.home: {
-                mTool.onDeselect();
-                finish();
-            }
+        if (id == android.R.id.home) {
+            mTool.onDeselect();
+            finish();
+            return true;
         }
 
+        // Deselect previous tool.
+        mToolMenuItem.setIcon(mTool.getIconResInactive());
+        mTool.onDeselect();
+
+        // Select new tool.
+        mTool = mToolsMap.get(id);
+        mToolMenuItem = item;
+        mToolMenuItem.setIcon(mTool.getIconResActive());
+        mTool.onSelect(mCanvasView);
+
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Register tools.
+     */
+    private void RegisterTools() {
+        // *** Add tool here. ***
+        mTools.add(new PenTool());
+        mTools.add(new SelectionTool());
+        // **********************
+
+        for (int i = 0; i < mTools.size(); i++) {
+            mToolsMap.put(i, mTools.get(i));
+        }
     }
 }

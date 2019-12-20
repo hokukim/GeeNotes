@@ -52,6 +52,7 @@ public class CanvasView extends View {
      */
     public void clearOverlay() {
         mOverlayBitmap.eraseColor(Color.TRANSPARENT);
+        invalidate();
     }
 
     /**
