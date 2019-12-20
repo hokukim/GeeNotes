@@ -2,6 +2,8 @@ package com.weehoo.geenotes.tool;
 
 import android.graphics.PointF;
 import android.view.MotionEvent;
+
+import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.canvas.CanvasView;
 
 public class PenTool implements ITool {
@@ -37,6 +39,7 @@ public class PenTool implements ITool {
             }
             case MotionEvent.ACTION_MOVE: {
                 if (mStartPoint == null) {
+                    // For some reason it's possible that the ACTION_DOWN event didn't fire, so set the first down event here.
                     mStartPoint = new PointF(event.getX(), event.getY());
                     mCanvasView.primaryCanvas.drawPoint(mStartPoint.x, mStartPoint.y, mCanvasView.primaryPaint);
                     return true;
@@ -69,5 +72,22 @@ public class PenTool implements ITool {
     @Override
     public void onDeselect() {
         // Do nothing.
+    }
+    /**
+     * Called to get tool's active icon.
+     * @return This tool's active icon res.
+     */
+    @Override
+    public int getIconResActive() {
+        return R.drawable.ic_tool_menu_pen_active;
+    }
+
+    /**
+     * Called to get tool's inactive icon.
+     * @return This tool's inactive icon res.
+     */
+    @Override
+    public int getIconResInactive() {
+        return R.drawable.ic_tool_menu_pen_inactive;
     }
 }

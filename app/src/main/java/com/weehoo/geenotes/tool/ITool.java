@@ -21,4 +21,16 @@ public interface ITool {
      * Called when the tool is deselected as the primary drawing tool.
      */
     void onDeselect();
+
+    /**
+     * Get the tool's active icon.
+     * @return This tool's active icon res.
+     */
+    int getIconResActive();
+
+    /**
+     * Get the tool's inactive icon.
+     * @return This tool's inactive icon res.
+     */
+    int getIconResInactive();
 }

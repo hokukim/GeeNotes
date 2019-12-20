@@ -2,14 +2,4 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.weehoo.geenotes.NoteActivity">
-    <item
-        android:id="@+id/action_pen"
-        android:orderInCategory="100"
-        android:title="@string/action_pen"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_select"
-        android:orderInCategory="101"
-        android:title="@string/action_select"
-        app:showAsAction="always" />
 </menu>
