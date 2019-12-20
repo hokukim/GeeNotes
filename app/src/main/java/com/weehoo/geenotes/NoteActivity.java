@@ -78,7 +78,7 @@ public class NoteActivity extends AppCompatActivity {
 
         for (int i = 0; i < event.getPointerCount(); i++) {
             switch (event.getToolType(i)) {
-                case MotionEvent.TOOL_TYPE_FINGER:
+                //case MotionEvent.TOOL_TYPE_FINGER:
                 case MotionEvent.TOOL_TYPE_STYLUS: {
                     // Send input event to input object.)
                     drawingChanged = mTool.onTouchEvent(event);
