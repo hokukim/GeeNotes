@@ -15,6 +15,7 @@ import android.view.Window;
 
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dimensions.StatusBar;
+import com.weehoo.geenotes.tool.EraserTool;
 import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
@@ -36,6 +37,8 @@ public class NoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
+        mCanvasView = findViewById(R.id.canvas_view);
+
         Toolbar toolbar = findViewById(R.id.toolbar_note);
         setSupportActionBar(toolbar);
 
@@ -49,8 +52,7 @@ public class NoteActivity extends AppCompatActivity {
         mToolsMap = new HashMap<>();
         this.RegisterTools();
 
-        // Set canvas view and default tool.
-        mCanvasView = findViewById(R.id.canvas_view);
+        // Set default tool.
         mTool = mTools.get(0);
         mTool.onSelect(mCanvasView);
 
@@ -76,7 +78,7 @@ public class NoteActivity extends AppCompatActivity {
 
         for (int i = 0; i < event.getPointerCount(); i++) {
             switch (event.getToolType(i)) {
-                //case MotionEvent.TOOL_TYPE_FINGER:
+                case MotionEvent.TOOL_TYPE_FINGER:
                 case MotionEvent.TOOL_TYPE_STYLUS: {
                     // Send input event to input object.)
                     drawingChanged = mTool.onTouchEvent(event);
@@ -144,6 +146,7 @@ public class NoteActivity extends AppCompatActivity {
     private void RegisterTools() {
         // *** Add tool here. ***
         mTools.add(new PenTool());
+        mTools.add(new EraserTool());
         mTools.add(new SelectionTool());
         // **********************
 

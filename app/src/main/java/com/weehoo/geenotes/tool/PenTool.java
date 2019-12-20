@@ -1,5 +1,7 @@
 package com.weehoo.geenotes.tool;
 
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 
@@ -8,6 +10,7 @@ import com.weehoo.geenotes.canvas.CanvasView;
 
 public class PenTool implements ITool {
 
+    protected Paint mPaint;
     private CanvasView mCanvasView;
     private PointF mStartPoint;
 
@@ -19,6 +22,7 @@ public class PenTool implements ITool {
     @Override
     public void onSelect(CanvasView canvasView) {
         mCanvasView = canvasView;
+        mPaint = mCanvasView.primaryPaint;
         mStartPoint = null;
     }
 
@@ -34,14 +38,14 @@ public class PenTool implements ITool {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
                 mStartPoint = new PointF(event.getX(), event.getY());
-                mCanvasView.primaryCanvas.drawPoint(mStartPoint.x, mStartPoint.y, mCanvasView.primaryPaint);
+                mCanvasView.primaryCanvas.drawPoint(mStartPoint.x, mStartPoint.y, mPaint);
                 return true;
             }
             case MotionEvent.ACTION_MOVE: {
                 if (mStartPoint == null) {
                     // For some reason it's possible that the ACTION_DOWN event didn't fire, so set the first down event here.
                     mStartPoint = new PointF(event.getX(), event.getY());
-                    mCanvasView.primaryCanvas.drawPoint(mStartPoint.x, mStartPoint.y, mCanvasView.primaryPaint);
+                    mCanvasView.primaryCanvas.drawPoint(mStartPoint.x, mStartPoint.y, mPaint);
                     return true;
                 }
 
@@ -49,7 +53,7 @@ public class PenTool implements ITool {
                 for (int j = 0; j < event.getHistorySize() - 1; j++) {
                     mCanvasView.primaryCanvas.drawLine(mStartPoint.x, mStartPoint.y,
                             event.getHistoricalX(j + 1), event.getHistoricalY(j + 1),
-                            mCanvasView.primaryPaint);
+                            mPaint);
 
                     // Set start of next segment.
                     mStartPoint.x = event.getHistoricalX(j + 1);

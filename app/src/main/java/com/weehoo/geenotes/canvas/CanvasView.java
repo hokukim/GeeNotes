@@ -60,6 +60,7 @@ public class CanvasView extends View {
      */
     public void clearPrimary() {
         mPrimaryBitmap.eraseColor(Color.TRANSPARENT);
+        invalidate();
     }
 
     /**
@@ -67,6 +68,7 @@ public class CanvasView extends View {
      */
     public void clearBackground() {
         mBackgroundBitmap.eraseColor(Color.TRANSPARENT);
+        invalidate();
     }
 
     /**
