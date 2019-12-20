@@ -50,7 +50,7 @@ public class PenTool implements ITool {
                 }
 
                 // Draw lines between batched historical points.
-                for (int j = 0; j < event.getHistorySize() - 1; j++) {
+                for (int j = 1; j < event.getHistorySize() - 1; j++) {
                     mCanvasView.primaryCanvas.drawLine(mStartPoint.x, mStartPoint.y,
                             event.getHistoricalX(j + 1), event.getHistoricalY(j + 1),
                             mPaint);
