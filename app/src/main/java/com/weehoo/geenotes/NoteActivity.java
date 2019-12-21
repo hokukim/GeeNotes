@@ -1,29 +1,23 @@
 package com.weehoo.geenotes;
 
+import android.app.Activity;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dimensions.StatusBar;
 import com.weehoo.geenotes.tool.EraserTool;
 import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -80,7 +74,7 @@ public class NoteActivity extends AppCompatActivity {
             switch (event.getToolType(i)) {
                 //case MotionEvent.TOOL_TYPE_FINGER:
                 case MotionEvent.TOOL_TYPE_STYLUS: {
-                    // Send input event to input object.)
+                    // Send input event to input object.
                     drawingChanged = mTool.onTouchEvent(event);
                 } break;
             }
@@ -122,9 +116,7 @@ public class NoteActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            mTool.onDeselect();
-            finish();
-            return true;
+            return super.onOptionsItemSelected(item);
         }
 
         // Deselect previous tool.
@@ -137,7 +129,21 @@ public class NoteActivity extends AppCompatActivity {
         mToolMenuItem.setIcon(mTool.getIconResActive());
         mTool.onSelect(mCanvasView);
 
-        return super.onOptionsItemSelected(item);
+        return true;
+    }
+
+    /**
+     * Called when the activity has detected the user's press of the back
+     * key. The {@link #getOnBackPressedDispatcher() OnBackPressedDispatcher} will be given a
+     * chance to handle the back button before the default behavior of
+     * {@link Activity#onBackPressed()} is invoked.
+     *
+     * @see #getOnBackPressedDispatcher()
+     */
+    @Override
+    public void onBackPressed() {
+        // Ignore default back button press.
+        // This activity has a back button in the action menu bar instead.
     }
 
     /**
