@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -72,7 +73,7 @@ public class NoteActivity extends AppCompatActivity {
 
         for (int i = 0; i < event.getPointerCount(); i++) {
             switch (event.getToolType(i)) {
-                //case MotionEvent.TOOL_TYPE_FINGER:
+                case MotionEvent.TOOL_TYPE_FINGER:
                 case MotionEvent.TOOL_TYPE_STYLUS: {
                     // Send input event to input object.
                     drawingChanged = mTool.onTouchEvent(event);
@@ -91,19 +92,28 @@ public class NoteActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.note_main, menu);
-
-        // Add tool menu items.
+        // Add tool menu items and group divider.
         for (int i = 0; i < mTools.size(); i++) {
             ITool tool = mTools.get(i);
             int iconRes = i == 0 ? tool.getIconResActive() : tool.getIconResInactive();
-            menu.add(0, i, i, "")
+            menu.add(R.id.note_menu_group_tools, i, 0, "")
                 .setIcon(iconRes)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
 
+        menu.add(R.id.note_menu_group_tools, 0, 1, "|")
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
         mToolMenuItem = menu.getItem(0);
+
+        // Add paging menu items and group divider.
+        menu.add(R.id.note_menu_group_paging, 1, 2, "<")
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(R.id.note_menu_group_paging, 2, 2, ">")
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }
@@ -113,21 +123,22 @@ public class NoteActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        int itemId = item.getItemId();
 
-        if (id == android.R.id.home) {
+        if (itemId == android.R.id.home) {
             return super.onOptionsItemSelected(item);
         }
+        else if (item.getGroupId() == R.id.note_menu_group_tools) {
+            // Deselect previous tool.
+            mToolMenuItem.setIcon(mTool.getIconResInactive());
+            mTool.onDeselect();
 
-        // Deselect previous tool.
-        mToolMenuItem.setIcon(mTool.getIconResInactive());
-        mTool.onDeselect();
-
-        // Select new tool.
-        mTool = mToolsMap.get(id);
-        mToolMenuItem = item;
-        mToolMenuItem.setIcon(mTool.getIconResActive());
-        mTool.onSelect(mCanvasView);
+            // Select new tool.
+            mTool = mToolsMap.get(itemId);
+            mToolMenuItem = item;
+            mToolMenuItem.setIcon(mTool.getIconResActive());
+            mTool.onSelect(mCanvasView);
+        }
 
         return true;
     }

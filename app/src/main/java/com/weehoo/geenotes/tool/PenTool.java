@@ -1,6 +1,5 @@
 package com.weehoo.geenotes.tool;
 
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.MotionEvent;
