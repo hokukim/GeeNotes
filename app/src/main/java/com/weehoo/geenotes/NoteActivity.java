@@ -12,7 +12,7 @@ import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.weehoo.geenotes.canvas.CanvasView;
-import com.weehoo.geenotes.dimensions.StatusBar;
+import com.weehoo.geenotes.note.NoteBook;
 import com.weehoo.geenotes.tool.EraserTool;
 import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.PenTool;
@@ -22,11 +22,17 @@ import java.util.HashMap;
 
 public class NoteActivity extends AppCompatActivity {
 
+    public final String NOTEBOOK_NAME_EXTRA_KEY = "notebook_name_extra";
+    private final int MENU_TOOLS_GROUP_ORDER = 0;
+    private final int MENU_PAGE_GROUP_ORDER = 100;
+
     private CanvasView mCanvasView;
     private ArrayList<ITool> mTools;
     private HashMap<Integer, ITool> mToolsMap;
     private ITool mTool;
     private MenuItem mToolMenuItem;
+
+    private NoteBook mNoteBook;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +46,19 @@ public class NoteActivity extends AppCompatActivity {
         // Action bar settings.
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowTitleEnabled(false); // Do not show app title.
-        actionBar.setDisplayHomeAsUpEnabled(true); // Display up button in place of home button.
+        actionBar.setDisplayHomeAsUpEnabled(true); // Display up/back button in place of home button.
 
         // Register tools.
         mTools = new ArrayList<>();
         mToolsMap = new HashMap<>();
-        this.RegisterTools();
+        this.registerTools();
 
         // Set default tool.
         mTool = mTools.get(0);
         mTool.onSelect(mCanvasView);
 
-        int yOffset = StatusBar.getStatusBarHeight();
+        // Load notebook.
+        this.loadNoteBook();
     }
 
     /**
@@ -92,27 +99,25 @@ public class NoteActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.note_main, menu);
+
         // Add tool menu items and group divider.
         for (int i = 0; i < mTools.size(); i++) {
             ITool tool = mTools.get(i);
             int iconRes = i == 0 ? tool.getIconResActive() : tool.getIconResInactive();
-            menu.add(R.id.note_menu_group_tools, i, 0, "")
+            menu.add(R.id.note_menu_group_tools, i, MENU_TOOLS_GROUP_ORDER, "")
                 .setIcon(iconRes)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
 
-        menu.add(R.id.note_menu_group_tools, 0, 1, "|")
+        menu.add(R.id.note_menu_group_tools, 0, MENU_TOOLS_GROUP_ORDER + 1, "|")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         mToolMenuItem = menu.getItem(0);
 
-        // Add paging menu items and group divider.
-        menu.add(R.id.note_menu_group_paging, 1, 2, "<")
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(R.id.note_menu_group_paging, 2, 2, ">")
+        // Add page menu items and group divider.
+        menu.add(R.id.note_menu_group_tools, 0, MENU_PAGE_GROUP_ORDER + 1, "|")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
@@ -123,12 +128,13 @@ public class NoteActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        int groupId = item.getGroupId();
         int itemId = item.getItemId();
 
         if (itemId == android.R.id.home) {
             return super.onOptionsItemSelected(item);
         }
-        else if (item.getGroupId() == R.id.note_menu_group_tools) {
+        else if (groupId == R.id.note_menu_group_tools && item.getOrder() == MENU_TOOLS_GROUP_ORDER) {
             // Deselect previous tool.
             mToolMenuItem.setIcon(mTool.getIconResInactive());
             mTool.onDeselect();
@@ -160,7 +166,7 @@ public class NoteActivity extends AppCompatActivity {
     /**
      * Register tools.
      */
-    private void RegisterTools() {
+    private void registerTools() {
         // *** Add tool here. ***
         mTools.add(new PenTool());
         mTools.add(new EraserTool());
@@ -169,6 +175,19 @@ public class NoteActivity extends AppCompatActivity {
 
         for (int i = 0; i < mTools.size(); i++) {
             mToolsMap.put(i, mTools.get(i));
+        }
+    }
+
+    private void loadNoteBook() {
+        String name = getIntent().getStringExtra(this.NOTEBOOK_NAME_EXTRA_KEY);
+
+        if (name == null) {
+            // Load a new notebook.
+            mNoteBook = new NoteBook();
+        }
+        else {
+            // TODO: Load an existing notebook.
+            mNoteBook = new NoteBook();
         }
     }
 }

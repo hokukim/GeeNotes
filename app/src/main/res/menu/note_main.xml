@@ -4,5 +4,5 @@
     tools:context="com.weehoo.geenotes.NoteActivity">
 
     <group android:id="@+id/note_menu_group_tools" />
-    <group android:id="@+id/note_menu_group_paging" />
+    <group android:id="@+id/note_menu_group_page" />
 </menu>
