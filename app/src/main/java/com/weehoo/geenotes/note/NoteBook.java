@@ -1,6 +1,8 @@
 package com.weehoo.geenotes.note;
 
 import android.graphics.Bitmap;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class NoteBook {
@@ -18,6 +20,16 @@ public class NoteBook {
         this.name = "Notebook";
 
         mID = "id";
+        mPages = new ArrayList<>();
+        mPages.add(new NotePage());
+    }
+
+    /**
+     * Constructs a NoteBook object using the specified ID.
+     * @param id
+     */
+    public NoteBook(String id) {
+        mID = id;
         mPages = new ArrayList<>();
         mPages.add(new NotePage());
     }
@@ -42,7 +54,7 @@ public class NoteBook {
      * Adds a new page to the end of the book.
      * @return The new page.
      */
-    public NotePage addNewPage() {
+    public NotePage addPage() {
         NotePage page = new NotePage();
         mPages.add(page);
 
@@ -51,14 +63,24 @@ public class NoteBook {
 
     /**
      * Adds a new page to the book at the specified index.
-     * @param pageIndex 0-base index at which a new page is to be added.
+     * @param pageIndex 0-based index at which a new page is to be added.
      * @return The new page.
      */
-    public NotePage addNewPage(int pageIndex) {
-        NotePage page = new NotePage();
-        mPages.add(pageIndex, page);
+    public NotePage addPage(int pageIndex) {
+        NotePage notePage = new NotePage();
+        mPages.add(pageIndex, notePage);
 
-        return page;
+        return notePage;
+    }
+
+    /**
+     * Adds a new page to the end of the book.
+     * @return The new page.
+     */
+    public NotePage addPage(NotePage notePage) {
+        mPages.add(notePage);
+
+        return notePage;
     }
 
     /**
@@ -68,7 +90,7 @@ public class NoteBook {
      */
     public NotePage getPage(int pageIndex) {
         if (mPages.size() > pageIndex) {
-            return this.addNewPage();
+            return this.addPage();
         }
 
         return mPages.get(pageIndex);
