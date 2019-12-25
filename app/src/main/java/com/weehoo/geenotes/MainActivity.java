@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Save notebook to storage.
         mNoteBooks.add(noteBook);
+        NoteBookDataContext.setNoteBooks(mStorage, mNoteBooks);
 
         // Start note activity.
         Intent intent = new Intent(this, NoteActivity.class);

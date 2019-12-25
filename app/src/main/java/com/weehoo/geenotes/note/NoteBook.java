@@ -2,6 +2,10 @@ package com.weehoo.geenotes.note;
 
 import android.graphics.Bitmap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -11,6 +15,10 @@ public class NoteBook {
 
     private String mID;
     private ArrayList<NotePage> mPages;
+
+    private static final String NAME_KEY = "name";
+    private static final String ID_KEY = "id";
+    private static final String PAGES_KEY = "pages";
 
     /**
      * Construct a new NoteBook object with a single empty page.
@@ -102,5 +110,55 @@ public class NoteBook {
      */
     public void deletePage(int pageIndex) {
         mPages.remove(pageIndex);
+    }
+
+    /**
+     * Converts the note book to a JSON object.
+     * @return JSON object.
+     */
+    public JSONObject toJSONObject() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(NoteBook.ID_KEY, mID);
+            jsonObject.put(NoteBook.NAME_KEY, name);
+
+            // Pages.
+            JSONArray pagesJSON = new JSONArray();
+
+            for(NotePage page : mPages) {
+                pagesJSON.put(page.toJSONObject());
+            }
+
+            jsonObject.put(NoteBook.PAGES_KEY, pagesJSON);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return jsonObject;
+    }
+
+    /**
+     * Converts a JSON object to a note book.
+     * @param jsonObject JSON object to convert.
+     * @return Note book.
+     */
+    public static NoteBook fromJSONObject(JSONObject jsonObject) {
+        NoteBook noteBook = null;
+
+        try {
+            noteBook = new NoteBook(jsonObject.getString(NoteBook.ID_KEY));
+            noteBook.name = jsonObject.getString(NoteBook.NAME_KEY);
+
+            JSONArray pagesJSON = jsonObject.getJSONArray(NoteBook.PAGES_KEY);
+
+            for (int i = 0; i < pagesJSON.length(); i++) {
+                NotePage notePage = new NotePage(pagesJSON.getString(i));
+                noteBook.addPage(notePage);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return noteBook;
     }
 }

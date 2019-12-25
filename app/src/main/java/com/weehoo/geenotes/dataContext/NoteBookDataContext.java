@@ -12,11 +12,7 @@ import java.util.HashMap;
 public class NoteBookDataContext {
 
     private static final String MANIFEST_FILE_NAME = "GeeNotesManifest.json";
-    private static final String MANIFEST_KEY_NOTEBOOKS = "notebooks";
-    private static final String MANIFEST_KEY_NOTEBOOK_ID = "id";
-    private static final String MANIFEST_KEY_NOTEBOOK_NAME = "name";
-    private static final String MANIFEST_KEY_NOTEBOOK_PAGES = "pages";
-    private static final String MANIFEST_KEY_NOTEBOOK_PAGE_ID = "id";
+    private static final String NOTEBOOKS_KEY = "notebooks";
 
     /**
      * Writes the notebooks list to storage.
@@ -25,22 +21,24 @@ public class NoteBookDataContext {
      * @param noteBooks Notebooks.
      * @return Notebooks JSON object.
      */
-    public static JSONObject setNoteBooks(IStorage storage, ArrayList<NoteBook> noteBooks) {
-        JSONObject noteBooksJSON = new JSONObject();
-
+    public static void setNoteBooks(IStorage storage, ArrayList<NoteBook> noteBooks) {
         try {
             // Convert notebooks list to JSON.
-            noteBooksJSON.put(MANIFEST_KEY_NOTEBOOKS, noteBooks);
+            JSONArray noteBooksJSON = new JSONArray();
+
+            for (NoteBook noteBook : noteBooks) {
+                noteBooksJSON.put(noteBook.toJSONObject());
+            }
 
             // Write to manifest.
-            storage.setFileString(MANIFEST_FILE_NAME, noteBooksJSON.toString());
+            JSONObject manifestJSON = new JSONObject();
+            manifestJSON.put(NOTEBOOKS_KEY, noteBooksJSON);
+
+            storage.setFileString(MANIFEST_FILE_NAME, manifestJSON.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        return noteBooksJSON;
     }
-
 
     /**
      * Gets notebooks from storage. Order cannot be guaranteed.
@@ -71,30 +69,11 @@ public class NoteBookDataContext {
         // Read file data as JSON.
         try {
             JSONObject manifestJSON = new JSONObject(data);
-            JSONArray noteBooksJSON = manifestJSON.getJSONArray(MANIFEST_KEY_NOTEBOOKS);
+            JSONArray noteBooksJSON = manifestJSON.getJSONArray(NOTEBOOKS_KEY);
 
             // Read all notebook metadata.
             for (int i = 0; i < noteBooksJSON.length(); i++) {
-                NoteBook noteBook = (NoteBook) noteBooksJSON.get(i);
-
-                /*
-                JSONObject noteBookJSON = noteBooksJSON.getJSONObject(i);
-                NoteBook noteBook = new NoteBook(noteBookJSON.getString(MANIFEST_KEY_NOTEBOOK_ID));
-                noteBook.name = noteBookJSON.getString(MANIFEST_KEY_NOTEBOOK_NAME);
-
-                // Read all page metadata.
-                JSONArray pagesJSON = noteBookJSON.getJSONArray(MANIFEST_KEY_NOTEBOOK_PAGES);
-
-                for (int j = 0; j < pagesJSON.length(); j++) {
-                    JSONObject notePageJSON = pagesJSON.getJSONObject(j);
-                    NotePage notePage = new NotePage(notePageJSON.getString(MANIFEST_KEY_NOTEBOOK_PAGE_ID));
-
-                    // Add page to notebook.
-                    noteBook.addPage(notePage);
-                }
-
-                 */
-
+                NoteBook noteBook = NoteBook.fromJSONObject(noteBooksJSON.getJSONObject(i));
                 allNoteBooks.add(noteBook);
             }
 

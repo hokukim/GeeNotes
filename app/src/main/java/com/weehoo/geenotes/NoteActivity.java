@@ -187,15 +187,9 @@ public class NoteActivity extends AppCompatActivity {
     private void loadNoteBook() {
         String id = getIntent().getStringExtra(this.NOTEBOOK_ID_EXTRA_KEY);
 
-        if (id == null || id == "") {
-            // Load a new notebook.
-            mNoteBook = new NoteBook();
-        }
-        else {
-            // Load an existing notebook.
-            mNoteBook = NoteBookDataContext.getNoteBooks(mStorage).get(id);
+        // Load an existing notebook.
+        mNoteBook = NoteBookDataContext.getNoteBooks(mStorage).get(id);
 
-            // Load pages.
-        }
+        // Load pages.
     }
 }
