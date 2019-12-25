@@ -10,6 +10,7 @@ public class GeeNotesApplication extends android.app.Application {
     public static Context getContext() {
         return mInstance.getApplicationContext();
     }
+
     /**
      * Called when the application is starting, before any activity, service,
      * or receiver objects (excluding content providers) have been created.
