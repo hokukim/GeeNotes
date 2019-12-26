@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Note page can only be directly accessed by note book.
  */
-class NotePage {
+public class NotePage {
 
     private String mID;
 

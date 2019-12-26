@@ -19,7 +19,6 @@ public class NoteBookDataContext {
      * Overwrites existing manifest.
      * @param storage Storage implementation.
      * @param noteBooks Notebooks.
-     * @return Notebooks JSON object.
      */
     public static void setNoteBooks(IStorage storage, ArrayList<NoteBook> noteBooks) {
         try {
@@ -41,26 +40,11 @@ public class NoteBookDataContext {
     }
 
     /**
-     * Gets notebooks from storage. Order cannot be guaranteed.
-     * @param storage Storage implementation.
-     * @return Notebooks.
-     */
-    public static HashMap<String, NoteBook> getNoteBooks(IStorage storage) {
-        HashMap<String, NoteBook> noteBooks = new HashMap<>();
-
-        for(NoteBook noteBook : NoteBookDataContext.getNoteBooksOrdered(storage)) {
-            noteBooks.put(noteBook.getID(), noteBook);
-        }
-
-        return noteBooks;
-    }
-
-    /**
      * Get notebooks from storage, ordered according to the order in which they were added.
      * @param storage Storage implementation.
      * @return List of notebooks.
      */
-    public static ArrayList<NoteBook> getNoteBooksOrdered(IStorage storage) {
+    public static ArrayList<NoteBook> getNoteBooks(IStorage storage) {
         ArrayList<NoteBook> allNoteBooks = new ArrayList<>();
 
         // Read entire manifest file.

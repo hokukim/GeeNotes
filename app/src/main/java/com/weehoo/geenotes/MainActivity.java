@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Get notebooks.
         mStorage = new Storage();
-        mNoteBooks = NoteBookDataContext.getNoteBooksOrdered(mStorage);
+        mNoteBooks = NoteBookDataContext.getNoteBooks(mStorage);
 
         // Display notebooks in listview.
         NoteBookAdapter noteBookAdapter = new NoteBookAdapter(this, new ArrayList<>(mNoteBooks));
@@ -46,16 +46,8 @@ public class MainActivity extends AppCompatActivity {
      * @param view The view for which the event is being handled.
      */
     public void newNoteActivity(View view) {
-        // Create a new notebook.
-        NoteBook noteBook = new NoteBook();
-
-        // Save notebook to storage.
-        mNoteBooks.add(noteBook);
-        NoteBookDataContext.setNoteBooks(mStorage, mNoteBooks);
-
-        // Start note activity.
+        // Start note activity for a new notebook.
         Intent intent = new Intent(this, NoteActivity.class);
-        intent.putExtra(NoteActivity.NOTEBOOK_ID_EXTRA_KEY, noteBook.getID());
         startActivity(intent);
     }
 
@@ -67,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     public void openNoteActivity(View view) {
         String id = (String) view.getTag();
 
-        // Start note activity.
+        // Start note activity for an existing notebook.
         Intent intent = new Intent(this, NoteActivity.class);
         intent.putExtra(NoteActivity.NOTEBOOK_ID_EXTRA_KEY, id);
         startActivity(intent);

@@ -30,7 +30,6 @@ public class NoteBook {
 
         mID = UUID.randomUUID().toString();
         mPages = new ArrayList<>();
-        mPages.add(new NotePage());
     }
 
     /**
@@ -40,7 +39,6 @@ public class NoteBook {
     private NoteBook(String id) {
         mID = id;
         mPages = new ArrayList<>();
-        mPages.add(new NotePage());
     }
 
     /**
@@ -63,7 +61,7 @@ public class NoteBook {
      * Adds a new page to the end of the book.
      * @return The new page.
      */
-    private NotePage addPage() {
+    public NotePage addPage() {
         NotePage page = new NotePage();
         mPages.add(page);
 
