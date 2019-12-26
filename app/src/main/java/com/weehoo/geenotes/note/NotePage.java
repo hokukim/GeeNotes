@@ -3,6 +3,8 @@ package com.weehoo.geenotes.note;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.UUID;
+
 /**
  * Note page can only be directly accessed by note book.
  */
@@ -15,14 +17,14 @@ public class NotePage {
     /**
      * Constructs a new NotePage object with empty data.
      */
-    public NotePage() {
-        mID = "1"; // TODO: Secure random ID generation.
+    NotePage() {
+        mID = UUID.randomUUID().toString();
     }
 
     /**
      * Constructs a new NotePage object using the specified ID.
      */
-    public NotePage(String id) {
+    NotePage(String id) {
         mID = id;
     }
 
@@ -30,7 +32,7 @@ public class NotePage {
      * Converts the note page to a JSON object.
      * @return JSON object.
      */
-    public JSONObject toJSONObject() {
+    JSONObject toJSONObject() {
         JSONObject jsonObject = new JSONObject();
 
         try {

@@ -9,9 +9,19 @@
     tools:showIn="@layout/activity_main">
 
     <Button
+        android:id="@+id/new_note_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="newNoteActivity"
-        android:text="@string/button_add_note" />
+        android:text="@string/button_add_note"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/notebooks_list_view"
+        android:layout_width="409dp"
+        android:layout_height="627dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_note_button" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

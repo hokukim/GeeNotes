@@ -8,6 +8,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,10 +33,11 @@ public class NoteActivity extends AppCompatActivity {
 
     private CanvasView mCanvasView;
     private ArrayList<ITool> mTools;
-    private HashMap<Integer, ITool> mToolsMap;
+    private SparseArray<ITool> mToolsMap;
     private ITool mTool;
     private MenuItem mToolMenuItem;
 
+    private  ArrayList<NoteBook> mNoteBooks;
     private NoteBook mNoteBook;
     private IStorage mStorage;
 
@@ -55,14 +57,14 @@ public class NoteActivity extends AppCompatActivity {
 
         // Register tools.
         mTools = new ArrayList<>();
-        mToolsMap = new HashMap<>();
+        mToolsMap = new SparseArray<>();
         this.registerTools();
 
         // Set default tool.
         mTool = mTools.get(0);
         mTool.onSelect(mCanvasView);
 
-        // Load notebook.
+        // Load notebooks.
         mStorage = new Storage();
         this.loadNoteBook();
     }
@@ -185,10 +187,27 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void loadNoteBook() {
-        String id = getIntent().getStringExtra(this.NOTEBOOK_ID_EXTRA_KEY);
+        mNoteBooks = NoteBookDataContext.getNoteBooks(mStorage);
+        String id = getIntent().getStringExtra(NoteActivity.NOTEBOOK_ID_EXTRA_KEY);
 
-        // Load an existing notebook.
-        mNoteBook = NoteBookDataContext.getNoteBooks(mStorage).get(id);
+        if (id == null || id.isEmpty()) {
+            // Load a new notebook.
+            mNoteBook = new NoteBook();
+            mNoteBook.addPage();
+            mNoteBooks.add(mNoteBook);
+
+            // Save new notebook to storage.
+            NoteBookDataContext.setNoteBooks(mStorage, mNoteBooks);
+        }
+        else {
+            // Load an existing notebook.
+            for (NoteBook noteBook : mNoteBooks) {
+                if (noteBook.getID().equalsIgnoreCase(id)) {
+                    mNoteBook = noteBook;
+                    break;
+                }
+            }
+        }
 
         // Load pages.
     }
