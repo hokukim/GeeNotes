@@ -72,7 +72,15 @@ public class CanvasView extends View {
     }
 
     /**
-     * Gets a copy of the primary drawing within the specified rect.
+     * Gets a copy of the primary drawing bitmap.
+     * @return Bitmap copy.
+     */
+    public Bitmap copyPrimaryBitmap() {
+        return Bitmap.createBitmap(mPrimaryBitmap);
+    }
+
+    /**
+     * Gets a copy of the primary drawing bitmap within the specified rect.
      * @param rect Rectangle.
      * @return Bitmap copy.
      */

@@ -1,6 +1,7 @@
 package com.weehoo.geenotes;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.os.Bundle;
 
@@ -12,8 +13,11 @@ import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewTreeObserver;
+
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
+import com.weehoo.geenotes.dataContext.NotePageDataContext;
 import com.weehoo.geenotes.note.NoteBook;
 import com.weehoo.geenotes.storage.IStorage;
 import com.weehoo.geenotes.storage.Storage;
@@ -23,7 +27,6 @@ import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -64,9 +67,15 @@ public class NoteActivity extends AppCompatActivity {
         mTool = mTools.get(0);
         mTool.onSelect(mCanvasView);
 
-        // Load notebooks.
-        mStorage = new Storage();
-        this.loadNoteBook();
+        // Load notebooks after canvas view has been created and sized.
+        mCanvasView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                mCanvasView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                mStorage = new Storage();
+                loadNoteBook();
+            }
+        });
     }
 
     /**
@@ -196,19 +205,23 @@ public class NoteActivity extends AppCompatActivity {
             mNoteBook.addPage();
             mNoteBooks.add(mNoteBook);
 
-            // Save new notebook to storage.
+            // Save new notebook and page to storage.
             NoteBookDataContext.setNoteBooks(mStorage, mNoteBooks);
+            mCanvasView.primaryCanvas.drawText("HELLO OUT THERE", 100, 100, mCanvasView.primaryPaint);
+            NotePageDataContext.setNotePage(mStorage, mNoteBook.getPage(0), mCanvasView.copyPrimaryBitmap());
         }
         else {
             // Load an existing notebook.
             for (NoteBook noteBook : mNoteBooks) {
                 if (noteBook.getID().equalsIgnoreCase(id)) {
                     mNoteBook = noteBook;
+
+                    // Load page.
+                    Bitmap pageBitmap = NotePageDataContext.getNotePage(mStorage, mNoteBook.getPage(0));
+                    mCanvasView.primaryCanvas.drawBitmap(pageBitmap, 0, 0, mCanvasView.primaryPaint);
                     break;
                 }
             }
         }
-
-        // Load pages.
     }
 }

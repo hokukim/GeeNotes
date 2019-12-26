@@ -151,7 +151,8 @@ public class NoteBook {
             JSONArray pagesJSON = jsonObject.getJSONArray(NoteBook.PAGES_KEY);
 
             for (int i = 0; i < pagesJSON.length(); i++) {
-                NotePage notePage = new NotePage(pagesJSON.getString(i));
+                JSONObject pageJSON = pagesJSON.getJSONObject(i);
+                NotePage notePage = NotePage.fromJSONObject(pageJSON);
                 noteBook.addPage(notePage);
             }
         } catch (JSONException e) {

@@ -24,8 +24,16 @@ public class NotePage {
     /**
      * Constructs a new NotePage object using the specified ID.
      */
-    NotePage(String id) {
+    private NotePage(String id) {
         mID = id;
+    }
+
+    /**
+     * Gets the ID of this page.
+     * @return Page ID.
+     */
+    public String getID() {
+        return mID;
     }
 
     /**
@@ -49,7 +57,7 @@ public class NotePage {
      * @param jsonObject JSON object to convert.
      * @return Note page.
      */
-    public static NotePage fromJSONObject(JSONObject jsonObject) {
+    static NotePage fromJSONObject(JSONObject jsonObject) {
         NotePage notePage = null;
 
         try {
