@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.weehoo.geenotes.adapters.NoteBookAdapter;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.note.NoteBook;
 import com.weehoo.geenotes.storage.IStorage;
@@ -28,8 +30,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
+        // Get notebooks.
         mStorage = new Storage();
         mNoteBooks = NoteBookDataContext.getNoteBooksOrdered(mStorage);
+
+        // Display notebooks in listview.
+        NoteBookAdapter noteBookAdapter = new NoteBookAdapter(this, new ArrayList<>(mNoteBooks));
+        ListView noteBooksListView = findViewById(R.id.notebooks_list_view);
+        noteBooksListView.setAdapter(noteBookAdapter);
     }
 
     /**
@@ -48,6 +56,20 @@ public class MainActivity extends AppCompatActivity {
         // Start note activity.
         Intent intent = new Intent(this, NoteActivity.class);
         intent.putExtra(NoteActivity.NOTEBOOK_ID_EXTRA_KEY, noteBook.getID());
+        startActivity(intent);
+    }
+
+    /**
+     * Note book list item click event handler.
+     * Starts Note activity for the specified note book.
+     * @param view The view for which the event is being handled.
+     */
+    public void openNoteActivity(View view) {
+        String id = (String) view.getTag();
+
+        // Start note activity.
+        Intent intent = new Intent(this, NoteActivity.class);
+        intent.putExtra(NoteActivity.NOTEBOOK_ID_EXTRA_KEY, id);
         startActivity(intent);
     }
 

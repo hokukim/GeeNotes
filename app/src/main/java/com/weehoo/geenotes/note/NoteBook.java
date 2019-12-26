@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class NoteBook {
 
@@ -27,16 +28,16 @@ public class NoteBook {
     public NoteBook() {
         this.name = "Notebook";
 
-        mID = "id";
+        mID = UUID.randomUUID().toString();
         mPages = new ArrayList<>();
         mPages.add(new NotePage());
     }
 
     /**
      * Constructs a NoteBook object using the specified ID.
-     * @param id
+     * @param id NoteBook ID.
      */
-    public NoteBook(String id) {
+    private NoteBook(String id) {
         mID = id;
         mPages = new ArrayList<>();
         mPages.add(new NotePage());
@@ -62,7 +63,7 @@ public class NoteBook {
      * Adds a new page to the end of the book.
      * @return The new page.
      */
-    public NotePage addPage() {
+    private NotePage addPage() {
         NotePage page = new NotePage();
         mPages.add(page);
 
@@ -85,7 +86,7 @@ public class NoteBook {
      * Adds a new page to the end of the book.
      * @return The new page.
      */
-    public NotePage addPage(NotePage notePage) {
+    private NotePage addPage(NotePage notePage) {
         mPages.add(notePage);
 
         return notePage;
@@ -97,7 +98,7 @@ public class NoteBook {
      * @return The page at the specified index, or a new page.
      */
     public NotePage getPage(int pageIndex) {
-        if (mPages.size() > pageIndex) {
+        if (pageIndex >= mPages.size()){
             return this.addPage();
         }
 
