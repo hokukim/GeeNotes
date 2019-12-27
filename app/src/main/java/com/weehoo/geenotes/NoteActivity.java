@@ -19,6 +19,7 @@ import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.dataContext.NotePageDataContext;
 import com.weehoo.geenotes.note.NoteBook;
+import com.weehoo.geenotes.note.NotePage;
 import com.weehoo.geenotes.storage.IStorage;
 import com.weehoo.geenotes.storage.Storage;
 import com.weehoo.geenotes.tool.EraserTool;
@@ -41,7 +42,8 @@ public class NoteActivity extends AppCompatActivity {
     private MenuItem mToolMenuItem;
 
     private  ArrayList<NoteBook> mNoteBooks;
-    private NoteBook mNoteBook;
+    private int mNoteBookIndex;
+    private int mNotePageIndex;
     private IStorage mStorage;
 
     @Override
@@ -66,6 +68,7 @@ public class NoteActivity extends AppCompatActivity {
         // Set default tool.
         mTool = mTools.get(0);
         mTool.onSelect(mCanvasView);
+        mToolMenuItem = null;
 
         // Load notebooks after canvas view has been created and sized.
         mCanvasView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -123,18 +126,16 @@ public class NoteActivity extends AppCompatActivity {
         for (int i = 0; i < mTools.size(); i++) {
             ITool tool = mTools.get(i);
             int iconRes = i == 0 ? tool.getIconResActive() : tool.getIconResInactive();
-            menu.add(R.id.note_menu_group_tools, i, MENU_TOOLS_GROUP_ORDER, "")
-                .setIcon(iconRes)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+            MenuItem item = menu.add(R.id.note_menu_group_tools, i, MENU_TOOLS_GROUP_ORDER, "");
+            item.setIcon(iconRes).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+            if (mToolMenuItem == null) {
+                mToolMenuItem = item;
+            }
         }
 
         menu.add(R.id.note_menu_group_tools, 0, MENU_TOOLS_GROUP_ORDER + 1, "|")
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-
-        mToolMenuItem = menu.getItem(0);
-
-        // Add page menu items and group divider.
-        menu.add(R.id.note_menu_group_tools, 0, MENU_PAGE_GROUP_ORDER + 1, "|")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
@@ -149,6 +150,10 @@ public class NoteActivity extends AppCompatActivity {
         int itemId = item.getItemId();
 
         if (itemId == android.R.id.home) {
+            // Save current page.
+            saveNoteBookData();
+
+            // Go back.
             return super.onOptionsItemSelected(item);
         }
         else if (groupId == R.id.note_menu_group_tools && item.getOrder() == MENU_TOOLS_GROUP_ORDER) {
@@ -161,6 +166,82 @@ public class NoteActivity extends AppCompatActivity {
             mToolMenuItem = item;
             mToolMenuItem.setIcon(mTool.getIconResActive());
             mTool.onSelect(mCanvasView);
+        }
+        else if (groupId == R.id.note_menu_group_page) {
+            if (itemId == R.id.note_menu_add_page) {
+                // Save current page.
+                saveNoteBookData();
+
+                // Load new page.
+                mNotePageIndex++;
+                mNoteBooks.get(mNoteBookIndex).addPage(mNotePageIndex);
+                mCanvasView.clearPrimary();
+                saveNoteBookData();
+                loadCanvasViewNotePage();
+            }
+            else if (itemId == R.id.note_menu_previous_page) {
+                // Save current page.
+                saveNoteBookData();
+                mCanvasView.clearPrimary();
+
+                // Retreat to previous page index.
+                mNotePageIndex--;
+
+                if (mNotePageIndex < 0) {
+                    // Insert (at front) and save a new page.
+                    mNotePageIndex = 0;
+                    mNoteBooks.get(mNoteBookIndex).addPage(mNotePageIndex);
+                    saveNoteBookData();
+                }
+
+                // Load the next page.
+                loadCanvasViewNotePage();
+            }
+            else if (itemId == R.id.note_menu_next_page) {
+                // Save current page.
+                saveNoteBookData();
+                mCanvasView.clearPrimary();
+
+                // Advance to next page index.
+                mNotePageIndex++;
+
+                if (mNotePageIndex >= mNoteBooks.get(mNoteBookIndex).getPageCount()) {
+                    // Insert (at end) and save a new page.
+                    mNoteBooks.get(mNoteBookIndex).addPage();
+                    saveNoteBookData();
+                }
+
+                // Load the next page.
+                loadCanvasViewNotePage();
+            }
+            else if (itemId == R.id.note_menu_delete_page) {
+                NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
+
+                // Delete the current page.
+                noteBook.deletePage(mNotePageIndex);
+
+                if (noteBook.getPageCount() == 0) {
+                    // Add a new page.
+                    mNotePageIndex = 0;
+                    noteBook.addPage();
+                    mCanvasView.clearPrimary();
+                    saveNoteBookData();
+                }
+                else {
+                    mCanvasView.clearPrimary();
+
+                    if (mNotePageIndex >= noteBook.getPageCount()) {
+                        // End page was deleted.
+                        mNotePageIndex = noteBook.getPageCount() - 1;
+                    }
+                }
+
+                // Update page.
+                loadCanvasViewNotePage();
+
+                // Save notebook.
+                saveNoteBookData();
+            }
         }
 
         return true;
@@ -196,32 +277,52 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     private void loadNoteBook() {
+        mNoteBookIndex = 0;
+        mNotePageIndex = 0;
         mNoteBooks = NoteBookDataContext.getNoteBooks(mStorage);
         String id = getIntent().getStringExtra(NoteActivity.NOTEBOOK_ID_EXTRA_KEY);
 
         if (id == null || id.isEmpty()) {
             // Load a new notebook.
-            mNoteBook = new NoteBook();
-            mNoteBook.addPage();
-            mNoteBooks.add(mNoteBook);
-
-            // Save new notebook and page to storage.
-            NoteBookDataContext.setNoteBooks(mStorage, mNoteBooks);
-            mCanvasView.primaryCanvas.drawText("HELLO OUT THERE", 100, 100, mCanvasView.primaryPaint);
-            NotePageDataContext.setNotePage(mStorage, mNoteBook.getPage(0), mCanvasView.copyPrimaryBitmap());
+            NoteBook noteBook = new NoteBook();
+            noteBook.addPage();
+            mNoteBooks.add(noteBook);
+            saveNoteBookData();
         }
         else {
             // Load an existing notebook.
-            for (NoteBook noteBook : mNoteBooks) {
-                if (noteBook.getID().equalsIgnoreCase(id)) {
-                    mNoteBook = noteBook;
+            for (int i = 0; i < mNoteBooks.size(); i++) {
+                NoteBook noteBook = mNoteBooks.get(i);
 
-                    // Load page.
-                    Bitmap pageBitmap = NotePageDataContext.getNotePage(mStorage, mNoteBook.getPage(0));
-                    mCanvasView.primaryCanvas.drawBitmap(pageBitmap, 0, 0, mCanvasView.primaryPaint);
+                if (noteBook.getID().equalsIgnoreCase(id)) {
+                    mNoteBookIndex = i;
+
+                    // Load first page.
                     break;
                 }
             }
         }
+
+        loadCanvasViewNotePage();
+    }
+
+    /**
+     * Saves current notebook and page to storage.
+     */
+    private void saveNoteBookData() {
+        // Save updated notebooks and page to storage.
+        NoteBookDataContext.setNoteBooks(mStorage, mNoteBooks);
+        NotePageDataContext.setNotePage(mStorage, mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex), mCanvasView.copyPrimaryBitmap());
+    }
+
+    /**
+     * Loads the current page to the primary canvas view.
+     */
+    private void loadCanvasViewNotePage() {
+        NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
+        Bitmap pageBitmap = NotePageDataContext.getNotePage(mStorage, noteBook.getPage(mNotePageIndex));
+
+        // Load new note page.
+        mCanvasView.primaryCanvas.drawBitmap(pageBitmap, 0, 0, mCanvasView.primaryPaint);
     }
 }
