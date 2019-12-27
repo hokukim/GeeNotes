@@ -106,4 +106,13 @@ public class Storage implements IStorage {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Delete a file.
+     * @param fileName Name of file to delete.
+     */
+    @Override
+    public void deleteFile(String fileName) {
+        GeeNotesApplication.getContext().deleteFile(fileName);
+    }
 }

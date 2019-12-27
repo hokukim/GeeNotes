@@ -218,6 +218,7 @@ public class NoteActivity extends AppCompatActivity {
                 NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
 
                 // Delete the current page.
+                NotePageDataContext.deleteNotePage(mStorage, noteBook.getPage(mNotePageIndex));
                 noteBook.deletePage(mNotePageIndex);
 
                 if (noteBook.getPageCount() == 0) {
