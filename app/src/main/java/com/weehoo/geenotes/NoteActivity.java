@@ -179,6 +179,41 @@ public class NoteActivity extends AppCompatActivity {
                 saveNoteBookData();
                 loadCanvasViewNotePage();
             }
+            else if (itemId == R.id.note_menu_previous_page) {
+                // Save current page.
+                saveNoteBookData();
+                mCanvasView.clearPrimary();
+
+                // Retreat to previous page index.
+                mNotePageIndex--;
+
+                if (mNotePageIndex <0) {
+                    // Insert (at front) and save a new page.
+                    mNotePageIndex = 0;
+                    mNoteBooks.get(mNoteBookIndex).addPage(mNotePageIndex);
+                    saveNoteBookData();
+                }
+
+                // Load the next page.
+                loadCanvasViewNotePage();
+            }
+            else if (itemId == R.id.note_menu_next_page) {
+                // Save current page.
+                saveNoteBookData();
+                mCanvasView.clearPrimary();
+
+                // Advance to next page index.
+                mNotePageIndex++;
+
+                if (mNotePageIndex >= mNoteBooks.get(mNoteBookIndex).getPageCount()) {
+                    // Insert (at end) and save a new page.
+                    mNoteBooks.get(mNoteBookIndex).addPage();
+                    saveNoteBookData();
+                }
+
+                // Load the next page.
+                loadCanvasViewNotePage();
+            }
         }
 
         return true;
@@ -258,6 +293,8 @@ public class NoteActivity extends AppCompatActivity {
     private void loadCanvasViewNotePage() {
         NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
         Bitmap pageBitmap = NotePageDataContext.getNotePage(mStorage, noteBook.getPage(mNotePageIndex));
+
+        // Load new note page.
         mCanvasView.primaryCanvas.drawBitmap(pageBitmap, 0, 0, mCanvasView.primaryPaint);
     }
 }

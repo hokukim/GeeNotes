@@ -8,22 +8,19 @@
 
     <group android:orderInCategory="100" android:id="@+id/note_menu_group_page">
         <item android:id="@+id/note_menu_add_page"
-            android:title="add page"
+            android:title="@string/action_add_page"
             android:icon="@drawable/ic_page_menu_add"
             app:showAsAction="ifRoom" />
         <item android:id="@+id/note_menu_previous_page"
-            android:title="previous page"
+            android:title="@string/action_previous_page"
             android:icon="@drawable/ic_page_menu_previous"
             app:showAsAction="ifRoom" />
-        <item android:id="@+id/next_page"
-            android:title="note_menu_next page"
+        <item android:id="@+id/note_menu_next_page"
+            android:title="@string/action_next_page"
             android:icon="@drawable/ic_page_menu_next"
             app:showAsAction="ifRoom"/>
-        <item
-            android:title="|"
-            app:showAsAction="ifRoom"/>
         <item android:id="@+id/delete_page"
-            android:title="delete page"
+            android:title="@string/action_delete_page"
             app:showAsAction="never" />
     </group>
 </menu>

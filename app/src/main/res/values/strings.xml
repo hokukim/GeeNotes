@@ -9,4 +9,9 @@
     <!-- Note activity -->
     <string name="action_pen">Pen</string>
     <string name="action_select">Select</string>
+    <string name="action_add_page">Add page</string>
+    <string name="action_previous_page">Previous page</string>
+    <string name="action_next_page">Next page</string>
+    <string name="action_delete_page">Delete page</string>
+
 </resources>
