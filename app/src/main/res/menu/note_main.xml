@@ -19,7 +19,7 @@
             android:title="@string/action_next_page"
             android:icon="@drawable/ic_page_menu_next"
             app:showAsAction="always"/>
-        <item android:id="@+id/delete_page"
+        <item android:id="@+id/note_menu_delete_page"
             android:title="@string/action_delete_page"
             app:showAsAction="never" />
     </group>

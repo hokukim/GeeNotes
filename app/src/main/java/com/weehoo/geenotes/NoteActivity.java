@@ -187,7 +187,7 @@ public class NoteActivity extends AppCompatActivity {
                 // Retreat to previous page index.
                 mNotePageIndex--;
 
-                if (mNotePageIndex <0) {
+                if (mNotePageIndex < 0) {
                     // Insert (at front) and save a new page.
                     mNotePageIndex = 0;
                     mNoteBooks.get(mNoteBookIndex).addPage(mNotePageIndex);
@@ -213,6 +213,34 @@ public class NoteActivity extends AppCompatActivity {
 
                 // Load the next page.
                 loadCanvasViewNotePage();
+            }
+            else if (itemId == R.id.note_menu_delete_page) {
+                NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
+
+                // Delete the current page.
+                noteBook.deletePage(mNotePageIndex);
+
+                if (noteBook.getPageCount() == 0) {
+                    // Add a new page.
+                    mNotePageIndex = 0;
+                    noteBook.addPage();
+                    mCanvasView.clearPrimary();
+                    saveNoteBookData();
+                }
+                else {
+                    mCanvasView.clearPrimary();
+
+                    if (mNotePageIndex >= noteBook.getPageCount()) {
+                        // End page was deleted.
+                        mNotePageIndex = noteBook.getPageCount() - 1;
+                    }
+                }
+
+                // Update page.
+                loadCanvasViewNotePage();
+
+                // Save notebook.
+                saveNoteBookData();
             }
         }
 
