@@ -34,4 +34,10 @@ public interface IStorage {
      * @param fileBitmap File contents as a bitmap.
      */
     void setFileBitmap(String fileName, Bitmap fileBitmap);
+
+    /**
+     * Delete a file.
+     * @param fileName Name of file to delete.
+     */
+    void deleteFile(String fileName);
 }

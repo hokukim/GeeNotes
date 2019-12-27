@@ -27,4 +27,13 @@ public class NotePageDataContext {
     public static Bitmap getNotePage(IStorage storage, NotePage notePage) {
         return storage.getFileBitmap(notePage.getID());
     }
+
+    /**
+     * Delete a note page's data from storage.
+     * @param storage Storage implementation.
+     * @param notePage Note page.
+     */
+    public static void deleteNotePage(IStorage storage, NotePage notePage) {
+        storage.deleteFile(notePage.getID());
+    }
 }
