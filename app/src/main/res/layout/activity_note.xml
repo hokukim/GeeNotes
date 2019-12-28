@@ -33,7 +33,30 @@
             android:layout_height="0dp"
             android:background="@color/colorPrimary"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toTopOf="@id/status_notebook_name"/>
+
+        <!-- Status bar -->
+        <TextView
+            android:id="@+id/status_notebook_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:layout_marginTop="@dimen/border_thin"
+            android:padding="@dimen/status_bar_padding"
+            app:layout_constraintTop_toBottomOf="@id/canvas_view"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/status_notepage_description"/>
+        <TextView
+            android:id="@+id/status_notepage_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:layout_marginTop="@dimen/border_thin"
+            android:padding="@dimen/status_bar_padding"
+            app:layout_constraintTop_toBottomOf="@id/canvas_view"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
