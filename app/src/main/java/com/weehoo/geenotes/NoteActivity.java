@@ -287,6 +287,7 @@ public class NoteActivity extends AppCompatActivity {
             NoteBook noteBook = new NoteBook();
             noteBook.addPage();
             mNoteBooks.add(noteBook);
+            mNoteBookIndex = mNoteBooks.size() - 1;
             saveNoteBookData();
         }
         else {
