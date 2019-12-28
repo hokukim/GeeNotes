@@ -39,7 +39,9 @@ public class NoteBookAdapter extends ArrayAdapter<NoteBook> {
 
         TextView nameView = listItem.findViewById(R.id.notebook_name);
         nameView.setText(noteBook.name);
-        nameView.setTag(noteBook.getID());
+
+        TextView idView = listItem.findViewById(R.id.notebook_id);
+        idView.setText(noteBook.getID());
 
         return listItem;
     }

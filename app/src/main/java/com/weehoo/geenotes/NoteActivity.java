@@ -19,7 +19,6 @@ import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.dataContext.NotePageDataContext;
 import com.weehoo.geenotes.note.NoteBook;
-import com.weehoo.geenotes.note.NotePage;
 import com.weehoo.geenotes.storage.IStorage;
 import com.weehoo.geenotes.storage.Storage;
 import com.weehoo.geenotes.tool.EraserTool;
@@ -120,7 +119,7 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.note_main, menu);
+        getMenuInflater().inflate(R.menu.menu_note, menu);
 
         // Add tool menu items and group divider.
         for (int i = 0; i < mTools.size(); i++) {
