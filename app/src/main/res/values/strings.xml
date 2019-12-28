@@ -4,7 +4,8 @@
 
     <!-- Main activity -->
     <string name="action_settings">Settings</string>
-    <string name="button_add_note">+ Note</string>
+    <string name="button_add_note">Add a new notebook</string>
+    <string name="notebooks_list_label">Notebooks</string>
 
     <!-- Note activity -->
     <string name="action_pen">Pen</string>

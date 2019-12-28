@@ -6,5 +6,9 @@
         android:id="@+id/notebook_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/notebooks_list_item_padding"
+        android:layout_marginTop="1px"
+        android:textSize="@dimen/notebooks_list_item_text_size"
+        android:background="@color/colorPrimary"
         android:onClick="openNoteActivity" />
 </RelativeLayout>
