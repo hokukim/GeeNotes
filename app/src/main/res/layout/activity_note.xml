@@ -6,7 +6,9 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".NoteActivity"
-    tools:showIn="@layout/activity_note">
+    tools:showIn="@layout/activity_note"
+    android:padding="@dimen/view_padding"
+    android:background="@color/colorPrimaryDark">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_note"
@@ -17,10 +19,21 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.weehoo.geenotes.canvas.CanvasView
-        android:id="@+id/canvas_view"
-        android:layout_height="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_note" />
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorPrimaryDark"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_note"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <com.weehoo.geenotes.canvas.CanvasView
+            android:id="@+id/canvas_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/colorPrimary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
