@@ -112,7 +112,7 @@ public class NoteBooksListContextMenu {
                 public void run() {
                     if (editText.requestFocus()) {
                         InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_NOT_ALWAYS);
                     }
                 }
             }, 100);
@@ -133,6 +133,10 @@ public class NoteBooksListContextMenu {
                 @Override
                 public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                     if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.hideSoftInputFromWindow(noteBooksListView.getWindowToken(), 0);
+
                         // Set the notebook name.
                         NoteBook noteBook = noteBooks.get(noteBookIndex);
                         noteBook.name = v.getText().toString();
