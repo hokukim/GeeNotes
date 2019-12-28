@@ -2,13 +2,16 @@ package com.weehoo.geenotes.menus.contextMenu;
 
 import android.content.Context;
 import android.view.ContextMenu;
+import android.view.KeyEvent;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.adapters.NoteBookAdapter;
@@ -72,10 +75,10 @@ public class NoteBooksListContextMenu {
      * @return boolean Return false to allow normal context menu processing to
      * proceed, true to consume it here.
      */
-    public boolean onContextItemSelected(ArrayList<NoteBook> noteBooks, ListView noteBooksListView, IStorage storage, MenuItem item) {
+    public boolean onContextItemSelected(final ArrayList<NoteBook> noteBooks, final ListView noteBooksListView, final IStorage storage, MenuItem item) {
         // Get index of notebook list item.
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int noteBookIndex = info.position;
+        final int noteBookIndex = info.position;
 
         // Handle context menu item selected.
         int itemId = item.getItemId();
@@ -103,15 +106,49 @@ public class NoteBooksListContextMenu {
 
             final EditText editText = noteBooksListView.findViewById(R.id.notebook_rename);
 
+            // Delay setting focus and showing IME.
             editText.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    boolean b = editText.requestFocus();
-
-                    InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    if (editText.requestFocus()) {
+                        InputMethodManager inputMethodManager = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+                    }
                 }
             }, 100);
+
+            editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+                /**
+                 * Called when an action is being performed.
+                 *
+                 * @param v        The view that was clicked.
+                 * @param actionId Identifier of the action.  This will be either the
+                 *                 identifier you supplied, or {@link EditorInfo#IME_NULL
+                 *                 EditorInfo.IME_NULL} if being called due to the enter key
+                 *                 being pressed.
+                 * @param event    If triggered by an enter key, this is the event;
+                 *                 otherwise, this is null.
+                 * @return Return true if you have consumed the action, else false.
+                 */
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        // Set the notebook name.
+                        NoteBook noteBook = noteBooks.get(noteBookIndex);
+                        noteBook.name = v.getText().toString();
+                        noteBooks.set(noteBookIndex, noteBook);
+
+                        // Save updated notebook to storage.
+                        NoteBookDataContext.setNoteBooks(storage, noteBooks);
+
+                        // Refresh notebooks list view.
+                        noteBooksListView.setAdapter(new NoteBookAdapter(mContext, new ArrayList<>(noteBooks)));
+                        return true;
+                    }
+
+                    return false;
+                }
+            });
         }
 
         return true;

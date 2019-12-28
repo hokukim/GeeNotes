@@ -25,6 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
+            android:imeOptions="actionDone"
             android:selectAllOnFocus="true"
             android:textSize="@dimen/notebooks_list_item_text_size"
             android:textColor="@color/colorPrimaryDark"
