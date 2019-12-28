@@ -104,7 +104,8 @@ public class NoteBooksListContextMenu {
             noteBookAdapter.setItemStatus(noteBookIndex, NoteBookAdapter.ItemStatus.EDIT);
             noteBookAdapter.notifyDataSetChanged();
 
-            final EditText editText = noteBooksListView.findViewById(R.id.notebook_rename);
+
+            final EditText editText = info.targetView.findViewById(R.id.notebook_rename);
 
             // Delay setting focus and showing IME.
             editText.postDelayed(new Runnable() {
