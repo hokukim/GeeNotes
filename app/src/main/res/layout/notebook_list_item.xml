@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark">
     <TextView
         android:id="@+id/notebook_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="@dimen/notebooks_list_item_padding"
-        android:layout_marginTop="1px"
+        android:layout_marginBottom="@dimen/border_thin"
         android:textSize="@dimen/notebooks_list_item_text_size"
+        android:textColor="@color/colorPrimaryDark"
         android:background="@color/colorPrimary" />
     <TextView
         android:id="@+id/notebook_id"
