@@ -3,12 +3,15 @@ package com.weehoo.geenotes;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,6 +21,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.weehoo.geenotes.adapters.NoteBookAdapter;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.dataContext.NotePageDataContext;
+import com.weehoo.geenotes.menus.contextMenu.NoteBooksListContextMenu;
 import com.weehoo.geenotes.note.NoteBook;
 import com.weehoo.geenotes.storage.IStorage;
 import com.weehoo.geenotes.storage.Storage;
@@ -27,6 +31,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private ListView mNoteBooksListView;
+    private NoteBooksListContextMenu mNoteBooksListContextMenu;
     private ArrayList<NoteBook> mNoteBooks;
     private IStorage mStorage;
 
@@ -42,13 +47,16 @@ public class MainActivity extends AppCompatActivity {
         mStorage = new Storage();
         mNoteBooks = NoteBookDataContext.getNoteBooks(mStorage);
 
-        // Display notebooks in listview.
+        // Display notebooks in list view.
         mNoteBooksListView = findViewById(R.id.notebooks_list_view);
         mNoteBooksListView.setAdapter(new NoteBookAdapter(this, new ArrayList<>(mNoteBooks)));
 
         // Set notebook item event listeners.
-        registerForContextMenu(mNoteBooksListView);
         mNoteBooksListView.setOnItemClickListener(new NoteBookItemClickListener(this));
+
+        // Register notebook list view for context menu.
+        registerForContextMenu(mNoteBooksListView);
+        mNoteBooksListContextMenu = new NoteBooksListContextMenu(this, getMenuInflater());
     }
 
     /**
@@ -106,8 +114,7 @@ public class MainActivity extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.context_notebooks_list_main, menu);
+        mNoteBooksListContextMenu.onCreateContextMenu(menu, v, menuInfo);
     }
 
     /**
@@ -129,29 +136,9 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.notebook_delete) {
-            // Get index of notebook list item.
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            int noteBookIndex = info.position;
+        mNoteBooksListContextMenu.onContextItemSelected(mNoteBooks, mNoteBooksListView, mStorage, item);
 
-            // Delete notebook pages.
-            NoteBook noteBook = mNoteBooks.get(noteBookIndex);
-
-            for (int i = 0; i < noteBook.getPageCount(); i++) {
-                NotePageDataContext.deleteNotePage(mStorage, noteBook.getPage(i));
-            }
-
-            // Delete notebook.
-            mNoteBooks.remove(noteBookIndex);
-            NoteBookDataContext.setNoteBooks(mStorage, mNoteBooks);
-
-            // Reload notebooks list view.
-            mNoteBooksListView.setAdapter(new NoteBookAdapter(this, new ArrayList<>(mNoteBooks)));
-        }
-
-        super.onContextItemSelected(item);
-
-        return true;
+        return super.onContextItemSelected(item);
     }
 
     /**

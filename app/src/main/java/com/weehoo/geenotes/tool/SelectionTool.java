@@ -16,11 +16,11 @@ import android.view.MotionEvent;
 import com.weehoo.geenotes.GeeNotesApplication;
 import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.canvas.CanvasView;
-import com.weehoo.geenotes.menu.Menu;
-import com.weehoo.geenotes.menu.MenuAlignType;
-import com.weehoo.geenotes.menu.MenuAnchorType;
-import com.weehoo.geenotes.menu.MenuItem;
-import com.weehoo.geenotes.menu.MenuItemType;
+import com.weehoo.geenotes.menus.Menu;
+import com.weehoo.geenotes.menus.MenuAlignType;
+import com.weehoo.geenotes.menus.MenuAnchorType;
+import com.weehoo.geenotes.menus.MenuItem;
+import com.weehoo.geenotes.menus.MenuItemType;
 
 public class SelectionTool implements ITool {
     private CanvasView mCanvasView;

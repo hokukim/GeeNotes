@@ -1,19 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimaryDark">
-    <TextView
-        android:id="@+id/notebook_name"
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/notebooks_list_item_padding"
-        android:layout_marginBottom="@dimen/border_thin"
-        android:textSize="@dimen/notebooks_list_item_text_size"
-        android:textColor="@color/colorPrimaryDark"
-        android:background="@color/colorPrimary" />
-    <TextView
-        android:id="@+id/notebook_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/notebook_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/notebooks_list_item_padding"
+            android:layout_marginBottom="@dimen/border_thin"
+            android:textSize="@dimen/notebooks_list_item_text_size"
+            android:textColor="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent" />
+        <EditText
+            android:id="@+id/notebook_rename"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:selectAllOnFocus="true"
+            android:textSize="@dimen/notebooks_list_item_text_size"
+            android:textColor="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
+            android:padding="@dimen/notebooks_list_item_padding"
+            android:layout_marginBottom="@dimen/border_thin"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/notebook_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </RelativeLayout>

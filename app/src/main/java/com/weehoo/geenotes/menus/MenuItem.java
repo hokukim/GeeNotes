@@ -1,4 +1,4 @@
-package com.weehoo.geenotes.menu;
+package com.weehoo.geenotes.menus;
 
 import android.graphics.Bitmap;
 
