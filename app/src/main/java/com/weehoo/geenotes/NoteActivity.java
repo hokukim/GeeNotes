@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
+import android.widget.TextView;
 
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
@@ -25,6 +26,8 @@ import com.weehoo.geenotes.tool.EraserTool;
 import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -177,6 +180,7 @@ public class NoteActivity extends AppCompatActivity {
                 mCanvasView.clearPrimary();
                 saveNoteBookData();
                 loadCanvasViewNotePage();
+                updateStatusBar();
             }
             else if (itemId == R.id.note_menu_previous_page) {
                 // Save current page.
@@ -193,8 +197,9 @@ public class NoteActivity extends AppCompatActivity {
                     saveNoteBookData();
                 }
 
-                // Load the next page.
+                // Load the previous page.
                 loadCanvasViewNotePage();
+                updateStatusBar();
             }
             else if (itemId == R.id.note_menu_next_page) {
                 // Save current page.
@@ -212,6 +217,7 @@ public class NoteActivity extends AppCompatActivity {
 
                 // Load the next page.
                 loadCanvasViewNotePage();
+                updateStatusBar();
             }
             else if (itemId == R.id.note_menu_delete_page) {
                 NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
@@ -238,6 +244,7 @@ public class NoteActivity extends AppCompatActivity {
 
                 // Update page.
                 loadCanvasViewNotePage();
+                updateStatusBar();
 
                 // Save notebook.
                 saveNoteBookData();
@@ -304,6 +311,7 @@ public class NoteActivity extends AppCompatActivity {
             }
         }
 
+        updateStatusBar();
         loadCanvasViewNotePage();
     }
 
@@ -325,5 +333,20 @@ public class NoteActivity extends AppCompatActivity {
 
         // Load new note page.
         mCanvasView.primaryCanvas.drawBitmap(pageBitmap, 0, 0, mCanvasView.primaryPaint);
+    }
+
+    private void updateStatusBar() {
+        // NoteBook name.
+        TextView noteBookNameView = (TextView) findViewById(R.id.status_notebook_name);
+        noteBookNameView.setText(mNoteBooks.get(mNoteBookIndex).name);
+
+        // Page description.
+        StringBuilder pageDescriptionStringBuilder = new StringBuilder("Page ");
+        pageDescriptionStringBuilder.append(mNotePageIndex + 1);
+        pageDescriptionStringBuilder.append(" of ");
+        pageDescriptionStringBuilder.append(mNoteBooks.get(mNoteBookIndex).getPageCount());
+
+        TextView pageDescriptionView = findViewById(R.id.status_notepage_description);
+        pageDescriptionView.setText(pageDescriptionStringBuilder.toString());
     }
 }

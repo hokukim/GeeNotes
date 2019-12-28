@@ -9,4 +9,7 @@
 
     <!-- borders -->
     <dimen name="border_thin">1dp</dimen>
+
+    <!-- Status bar -->
+    <dimen name="status_bar_padding">4dp</dimen>
 </resources>
