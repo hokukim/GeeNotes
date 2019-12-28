@@ -1,4 +1,4 @@
-package com.weehoo.geenotes.menu;
+package com.weehoo.geenotes.menus;
 
 public enum MenuItemType {
     MENU_ITEM_TYPE_DELETE,

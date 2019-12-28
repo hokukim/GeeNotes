@@ -1,5 +1,5 @@
 <resources>
-    <dimen name="view_padding">16dp</dimen>
+    <dimen name="view_padding">8dp</dimen>
 
     <!-- main activity -->
     <dimen name="fab_margin">8dp</dimen>

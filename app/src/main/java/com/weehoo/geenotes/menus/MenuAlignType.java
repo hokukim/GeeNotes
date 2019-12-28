@@ -1,4 +1,4 @@
-package com.weehoo.geenotes.menu;
+package com.weehoo.geenotes.menus;
 
 public enum MenuAlignType {
     MENU_ALIGN_LEFT,
