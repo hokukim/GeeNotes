@@ -87,7 +87,7 @@ public class NoteBooksListContextMenu {
         int itemId = item.getItemId();
 
         if (itemId == R.id.notebook_delete) {
-            getDeleteNotebookConfirmationDialog(noteBooksListView, noteBooks, noteBookIndex, storage).show();
+            getDeleteNoteBookConfirmationDialog(noteBooksListView, noteBooks, noteBookIndex, storage).show();
         } else if (itemId == R.id.notebook_rename) {
             // Set edit view to rename a notebook.
             NoteBookAdapter noteBookAdapter = (NoteBookAdapter) noteBooksListView.getAdapter();
@@ -156,11 +156,11 @@ public class NoteBooksListContextMenu {
      * @param storage Storage implementation from which to delete the notebook and its pages.
      * @return AlertDialog object.
      */
-    private AlertDialog getDeleteNotebookConfirmationDialog(final ListView noteBooksListView, final ArrayList<NoteBook> noteBooks, final int noteBookIndex, final IStorage storage) {
+    private AlertDialog getDeleteNoteBookConfirmationDialog(final ListView noteBooksListView, final ArrayList<NoteBook> noteBooks, final int noteBookIndex, final IStorage storage) {
         final NoteBook noteBook = noteBooks.get(noteBookIndex);
 
         // Construct alert dialog with positive and negative button click listeners.
-        AlertDialog alertDialog = new AlertDialog.Builder(mContext)
+        return new AlertDialog.Builder(mContext)
                 .setTitle(R.string.notebook_delete_confirm_title)
                 .setMessage(String.format(mContext.getResources().getString(R.string.notebook_delete_confirm_message_spec), noteBook.name))
                 .setIcon(R.drawable.ic_selector_menu_delete)
@@ -188,7 +188,5 @@ public class NoteBooksListContextMenu {
                     }
                 })
                 .create();
-
-        return alertDialog;
     }
 }
