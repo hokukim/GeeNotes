@@ -1,11 +1,14 @@
 package com.weehoo.geenotes.tool;
 
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 
 import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.canvas.CanvasView;
+
+import java.util.HashMap;
 
 public class PenTool implements ITool {
 
@@ -50,9 +53,9 @@ public class PenTool implements ITool {
 
                 // Draw lines between batched historical points.
                 for (int j = 1; j < event.getHistorySize() - 1; j++) {
-                    mCanvasView.primaryCanvas.drawLine(mStartPoint.x, mStartPoint.y,
+                    new PenDrawLineRunnable(mCanvasView.primaryCanvas, mStartPoint.x, mStartPoint.y,
                             event.getHistoricalX(j + 1), event.getHistoricalY(j + 1),
-                            mPaint);
+                            mPaint).run();
 
                     // Set start of next segment.
                     mStartPoint.x = event.getHistoricalX(j + 1);
@@ -92,5 +95,45 @@ public class PenTool implements ITool {
     @Override
     public int getIconResInactive() {
         return R.drawable.ic_tool_menu_pen_inactive;
+    }
+
+
+    /**
+     * Runnable class draws a pen to a canvas.
+     */
+    private class PenDrawLineRunnable implements Runnable {
+        private Canvas mCanvas;
+        private float mStartX;
+        private float mEndX;
+        private float mStartY;
+        private float mEndY;
+        private Paint mPaint;
+
+        public PenDrawLineRunnable(Canvas canvas, float startX, float startY, float endX, float endY, Paint paint) {
+            mCanvas = canvas;
+            mStartX = startX;
+            mStartY = startY;
+            mEndX = endX;
+            mEndY = endY;
+            mPaint = paint;
+        }
+
+        /**
+         * When an object implementing interface <code>Runnable</code> is used
+         * to create a thread, starting the thread causes the object's
+         * <code>run</code> method to be called in that separately executing
+         * thread.
+         * <p>
+         * The general contract of the method <code>run</code> is that it may
+         * take any action whatsoever.
+         *
+         * @see Thread#run()
+         */
+        @Override
+        public void run() {
+            mCanvasView.primaryCanvas.drawLine(mStartX, mStartY,
+                    mEndX, mEndY,
+                    mPaint);
+        }
     }
 }
