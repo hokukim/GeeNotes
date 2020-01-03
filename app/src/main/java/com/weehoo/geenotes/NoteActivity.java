@@ -1,11 +1,13 @@
 package com.weehoo.geenotes;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -221,33 +223,7 @@ public class NoteActivity extends AppCompatActivity {
             }
             else if (itemId == R.id.note_menu_delete_page) {
                 NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
-
-                // Delete the current page.
-                NotePageDataContext.deleteNotePage(mStorage, noteBook.getPage(mNotePageIndex));
-                noteBook.deletePage(mNotePageIndex);
-
-                if (noteBook.getPageCount() == 0) {
-                    // Add a new page.
-                    mNotePageIndex = 0;
-                    noteBook.addPage();
-                    mCanvasView.clearPrimary();
-                    saveNoteBookData();
-                }
-                else {
-                    mCanvasView.clearPrimary();
-
-                    if (mNotePageIndex >= noteBook.getPageCount()) {
-                        // End page was deleted.
-                        mNotePageIndex = noteBook.getPageCount() - 1;
-                    }
-                }
-
-                // Update page.
-                loadCanvasViewNotePage();
-                updateStatusBar();
-
-                // Save notebook.
-                saveNoteBookData();
+                getDeleteNotePageConfirmationDialog().show();
             }
         }
 
@@ -348,5 +324,57 @@ public class NoteActivity extends AppCompatActivity {
 
         TextView pageDescriptionView = findViewById(R.id.status_notepage_description);
         pageDescriptionView.setText(pageDescriptionStringBuilder.toString());
+    }
+
+    /**
+     * Constructs an AlertAction dialog to confirm or cancel notebook deletion.
+     * @return AlertDialog object.
+     */
+    private AlertDialog getDeleteNotePageConfirmationDialog() {
+        final NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
+
+        // Construct alert dialog with positive and negative button click listeners.
+        return new AlertDialog.Builder(this)
+                .setTitle(R.string.notepage_delete_confirm_title)
+                .setMessage(R.string.notepage_delete_confirm_message)
+                .setIcon(R.drawable.ic_selector_menu_delete)
+                .setPositiveButton(R.string.notepage_delete_confirm_delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Delete the current page.
+                        NotePageDataContext.deleteNotePage(mStorage, noteBook.getPage(mNotePageIndex));
+                        noteBook.deletePage(mNotePageIndex);
+
+                        if (noteBook.getPageCount() == 0) {
+                            // Add a new page.
+                            mNotePageIndex = 0;
+                            noteBook.addPage();
+                            mCanvasView.clearPrimary();
+                            saveNoteBookData();
+                        }
+                        else {
+                            mCanvasView.clearPrimary();
+
+                            if (mNotePageIndex >= noteBook.getPageCount()) {
+                                // End page was deleted.
+                                mNotePageIndex = noteBook.getPageCount() - 1;
+                            }
+                        }
+
+                        // Update page.
+                        loadCanvasViewNotePage();
+                        updateStatusBar();
+
+                        // Save notebook.
+                        saveNoteBookData();
+                    }
+                })
+                .setNegativeButton(R.string.notepage_delete_confirm_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
     }
 }

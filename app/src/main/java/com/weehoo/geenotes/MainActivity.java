@@ -3,16 +3,11 @@ package com.weehoo.geenotes;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
-import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -21,7 +16,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.weehoo.geenotes.adapters.NoteBookAdapter;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
-import com.weehoo.geenotes.dataContext.NotePageDataContext;
 import com.weehoo.geenotes.menus.contextMenu.NoteBooksListContextMenu;
 import com.weehoo.geenotes.note.NoteBook;
 import com.weehoo.geenotes.storage.IStorage;
@@ -137,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        mNoteBooksListContextMenu.onContextItemSelected(mNoteBooks, mNoteBooksListView, mStorage, item);
+        mNoteBooksListContextMenu.onContextItemSelected(mNoteBooksListView, mNoteBooks, mStorage, item);
 
         return super.onContextItemSelected(item);
     }
@@ -146,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
      * Notebook item click listener.
      */
     private class NoteBookItemClickListener implements AdapterView.OnItemClickListener {
-        Context mContext = null;
+        Context mContext;
 
-        public NoteBookItemClickListener(Context context)
+        NoteBookItemClickListener(Context context)
         {
             mContext = context;
         }

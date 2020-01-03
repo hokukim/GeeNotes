@@ -1,6 +1,7 @@
 package com.weehoo.geenotes.menus.contextMenu;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
 import android.view.MenuInflater;
@@ -12,6 +13,8 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.adapters.NoteBookAdapter;
@@ -75,7 +78,7 @@ public class NoteBooksListContextMenu {
      * @return boolean Return false to allow normal context menu processing to
      * proceed, true to consume it here.
      */
-    public boolean onContextItemSelected(final ArrayList<NoteBook> noteBooks, final ListView noteBooksListView, final IStorage storage, MenuItem item) {
+    public boolean onContextItemSelected(final ListView noteBooksListView, final ArrayList<NoteBook> noteBooks, final IStorage storage, MenuItem item) {
         // Get index of notebook list item.
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         final int noteBookIndex = info.position;
@@ -84,21 +87,8 @@ public class NoteBooksListContextMenu {
         int itemId = item.getItemId();
 
         if (itemId == R.id.notebook_delete) {
-            // Delete notebook pages.
-            NoteBook noteBook = noteBooks.get(noteBookIndex);
-
-            for (int i = 0; i < noteBook.getPageCount(); i++) {
-                NotePageDataContext.deleteNotePage(storage, noteBook.getPage(i));
-            }
-
-            // Delete notebook.
-            noteBooks.remove(noteBookIndex);
-            NoteBookDataContext.setNoteBooks(storage, noteBooks);
-
-            // Reload notebooks list view.
-            noteBooksListView.setAdapter(new NoteBookAdapter(mContext, new ArrayList<>(noteBooks)));
-        }
-        else if (itemId == R.id.notebook_rename) {
+            getDeleteNoteBookConfirmationDialog(noteBooksListView, noteBooks, noteBookIndex, storage).show();
+        } else if (itemId == R.id.notebook_rename) {
             // Set edit view to rename a notebook.
             NoteBookAdapter noteBookAdapter = (NoteBookAdapter) noteBooksListView.getAdapter();
             noteBookAdapter.setItemStatus(noteBookIndex, NoteBookAdapter.ItemStatus.EDIT);
@@ -156,5 +146,47 @@ public class NoteBooksListContextMenu {
         }
 
         return true;
+    }
+
+    /**
+     * Constructs an AlertAction dialog to confirm or cancel notebook deletion.
+     * @param noteBooksListView NoteBooks list view.
+     * @param noteBooks All notebooks.
+     * @param noteBookIndex Index of notebook to delete.
+     * @param storage Storage implementation from which to delete the notebook and its pages.
+     * @return AlertDialog object.
+     */
+    private AlertDialog getDeleteNoteBookConfirmationDialog(final ListView noteBooksListView, final ArrayList<NoteBook> noteBooks, final int noteBookIndex, final IStorage storage) {
+        final NoteBook noteBook = noteBooks.get(noteBookIndex);
+
+        // Construct alert dialog with positive and negative button click listeners.
+        return new AlertDialog.Builder(mContext)
+                .setTitle(R.string.notebook_delete_confirm_title)
+                .setMessage(String.format(mContext.getResources().getString(R.string.notebook_delete_confirm_message_spec), noteBook.name))
+                .setIcon(R.drawable.ic_selector_menu_delete)
+                .setPositiveButton(R.string.notebook_delete_confirm_delete, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Delete notebook pages.
+
+                        for (int i = 0; i < noteBook.getPageCount(); i++) {
+                            NotePageDataContext.deleteNotePage(storage, noteBook.getPage(i));
+                        }
+
+                        // Delete notebook.
+                        noteBooks.remove(noteBookIndex);
+                        NoteBookDataContext.setNoteBooks(storage, noteBooks);
+
+                        // Reload notebooks list view.
+                        noteBooksListView.setAdapter(new NoteBookAdapter(mContext, new ArrayList<>(noteBooks)));
+                    }
+                })
+                .setNegativeButton(R.string.notebook_delete_confirm_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
     }
 }

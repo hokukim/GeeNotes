@@ -9,6 +9,18 @@
     <string name="notebooks_list_context_delete">Delete</string>
     <string name="notebooks_list_context_rename">Rename</string>
 
+    <!-- NoteBook delete confirmation -->
+    <string name="notebook_delete_confirm_title">Delete notebook</string>
+    <string name="notebook_delete_confirm_message_spec">Notebook "%1$s" and all of its pages will be permanently deleted from this device.</string>
+    <string name="notebook_delete_confirm_cancel">Cancel</string>
+    <string name="notebook_delete_confirm_delete">Delete</string>
+
+    <!-- NotePage delete confirmation -->
+    <string name="notepage_delete_confirm_title">Delete page</string>
+    <string name="notepage_delete_confirm_message">This page will be permanently deleted from this device.</string>
+    <string name="notepage_delete_confirm_cancel">Cancel</string>
+    <string name="notepage_delete_confirm_delete">Delete</string>
+
     <!-- Note activity -->
     <string name="action_pen">Pen</string>
     <string name="action_select">Select</string>
