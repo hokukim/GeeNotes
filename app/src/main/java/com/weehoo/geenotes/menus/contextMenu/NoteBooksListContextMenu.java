@@ -161,10 +161,10 @@ public class NoteBooksListContextMenu {
 
         // Construct alert dialog with positive and negative button click listeners.
         AlertDialog alertDialog = new AlertDialog.Builder(mContext)
-                .setTitle("Delete notebook")
-                .setMessage("Notebook \"" + noteBook.name + "\" and all of its pages will be permanently deleted from this device.")
+                .setTitle(R.string.notebook_delete_confirm_title)
+                .setMessage(String.format(mContext.getResources().getString(R.string.notebook_delete_confirm_message_spec), noteBook.name))
                 .setIcon(R.drawable.ic_selector_menu_delete)
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.notebook_delete_confirm_delete, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Delete notebook pages.
@@ -181,7 +181,7 @@ public class NoteBooksListContextMenu {
                         noteBooksListView.setAdapter(new NoteBookAdapter(mContext, new ArrayList<>(noteBooks)));
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.notebook_delete_confirm_cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
