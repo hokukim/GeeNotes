@@ -37,7 +37,6 @@ public class NoteActivity extends AppCompatActivity {
 
     public static final String NOTEBOOK_ID_EXTRA_KEY = "notebook_id_extra";
     private final int MENU_TOOLS_GROUP_ORDER = 0;
-    private final int MENU_PAGE_GROUP_ORDER = 100;
 
     private CanvasView mCanvasView;
     private ArrayList<ITool> mTools;
