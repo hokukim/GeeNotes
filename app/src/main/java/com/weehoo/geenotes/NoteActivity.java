@@ -3,7 +3,11 @@ package com.weehoo.geenotes;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.PointF;
+import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
@@ -18,6 +22,7 @@ import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.weehoo.geenotes.background.GridBackground;
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.dataContext.NotePageDataContext;
@@ -79,7 +84,11 @@ public class NoteActivity extends AppCompatActivity {
             public void onGlobalLayout() {
                 mCanvasView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mStorage = new Storage();
+
                 loadNoteBook();
+
+                GridBackground bg = new GridBackground();
+                bg.onSelect(mCanvasView);
             }
         });
     }

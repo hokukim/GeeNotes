@@ -11,7 +11,7 @@
 
     <!-- NoteBook delete confirmation -->
     <string name="notebook_delete_confirm_title">Delete notebook</string>
-    <string name="notebook_delete_confirm_message_spec">Notebook "%1$s" and all of its pages will be permanently deleted from this device.</string>
+    <string name="notebook_delete_confirm_message_spec">Notebook \"%1$s\" and all of its pages will be permanently deleted from this device.</string>
     <string name="notebook_delete_confirm_cancel">Cancel</string>
     <string name="notebook_delete_confirm_delete">Delete</string>
 
