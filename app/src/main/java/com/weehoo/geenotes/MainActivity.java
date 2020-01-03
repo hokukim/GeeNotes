@@ -1,6 +1,7 @@
 package com.weehoo.geenotes;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        mNoteBooksListContextMenu.onContextItemSelected(mNoteBooks, mNoteBooksListView, mStorage, item);
+        mNoteBooksListContextMenu.onContextItemSelected(mNoteBooksListView, mNoteBooks, mStorage, item);
 
         return super.onContextItemSelected(item);
     }
