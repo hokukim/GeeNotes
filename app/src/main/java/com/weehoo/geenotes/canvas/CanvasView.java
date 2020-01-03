@@ -8,8 +8,10 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 
+import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.dimensions.StatusBar;
 
 public class CanvasView extends View {
@@ -41,6 +43,10 @@ public class CanvasView extends View {
         super(context, attrs);
 
         mInputOffsets = new PointF(0, 0);
+        mInputOffsets.x -= TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                (float) getResources().getDimension(R.dimen.view_padding),
+                getResources().getDisplayMetrics())/2;
 
         // Initialize paints.
         bitmapConfig = Bitmap.Config.ARGB_8888;
@@ -127,7 +133,7 @@ public class CanvasView extends View {
         // Set adjusted height, possibly due to toolbars.
         int[] loc = new int[2];
         getLocationOnScreen(loc);
-        h -= (loc[1] - StatusBar.getStatusBarHeight());
+        //h -= (loc[1] - StatusBar.getStatusBarHeight());
         mInputOffsets.y = loc[1] ;
 
         // Set background canvas with bitmap.
