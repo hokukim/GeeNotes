@@ -2,6 +2,7 @@ package com.weehoo.geenotes;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.weehoo.geenotes.background.GridBackground;
+import com.weehoo.geenotes.background.IBackground;
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.dataContext.NotePageDataContext;
@@ -86,9 +88,6 @@ public class NoteActivity extends AppCompatActivity {
                 mStorage = new Storage();
 
                 loadNoteBook();
-
-                GridBackground bg = new GridBackground();
-                bg.onSelect(mCanvasView);
             }
         });
     }
@@ -317,6 +316,10 @@ public class NoteActivity extends AppCompatActivity {
 
         // Load new note page.
         mCanvasView.primaryCanvas.drawBitmap(pageBitmap, 0, 0, mCanvasView.primaryPaint);
+
+        // Draw background.
+        IBackground bg = new GridBackground();
+        bg.onSelect(mCanvasView);
     }
 
     private void updateStatusBar() {
