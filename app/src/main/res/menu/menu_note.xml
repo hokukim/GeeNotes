@@ -17,7 +17,7 @@
             android:icon="@drawable/ic_page_menu_background"
             android:orderInCategory="@integer/note_menu_backgrounds_group_order_min"
             app:showAsAction="always">
-            <menu></menu>
+            <menu />
         </item>
         <item
             android:title="|"

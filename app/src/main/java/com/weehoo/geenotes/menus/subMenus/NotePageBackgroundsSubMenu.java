@@ -10,7 +10,6 @@ import java.util.ArrayList;
 
 public class NotePageBackgroundsSubMenu {
 
-    private Menu mSubMenu;
     private MenuItem mMenuItem;
     private ArrayList<IBackground> mBackgrounds;
     private SparseArray<IBackground> mBackgroundsMap;
@@ -37,23 +36,20 @@ public class NotePageBackgroundsSubMenu {
      * @return The default selected background.
      */
     public IBackground onCreateOptionsMenu(Menu subMenu, int groupId, int order) {
-        mSubMenu = subMenu;
-        MenuItem defaultMenuItem = null;
-
-        mSubMenu.clear();
+        subMenu.clear();
 
         for (int i = 0; i < mBackgrounds.size(); i++) {
             IBackground background = mBackgrounds.get(i);
             int iconRes = i == 0 ? background.getIconResActive() : background.getIconResActive();
 
-            MenuItem menuItem = mSubMenu.add(groupId, i, order, background.getText());
+            MenuItem menuItem = subMenu.add(groupId, i, order, background.getText());
             menuItem.setIcon(iconRes);
 
             mBackgroundsMap.put(i, background);
         }
 
         // Set default selected submenu item and background.
-        mMenuItem = mSubMenu.getItem(0);
+        mMenuItem = subMenu.getItem(0);
         mBackground = mBackgrounds.get(0);
 
         return mBackground;

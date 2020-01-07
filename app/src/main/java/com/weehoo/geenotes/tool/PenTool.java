@@ -1,14 +1,11 @@
 package com.weehoo.geenotes.tool;
 
-import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.view.MotionEvent;
 
 import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.canvas.CanvasView;
-
-import java.util.HashMap;
 
 public class PenTool implements ITool {
 
@@ -53,7 +50,7 @@ public class PenTool implements ITool {
 
                 // Draw lines between batched historical points.
                 for (int j = 1; j < event.getHistorySize() - 1; j++) {
-                    new PenDrawLineRunnable(mCanvasView.primaryCanvas, mStartPoint.x, mStartPoint.y,
+                    new PenDrawLineRunnable(mStartPoint.x, mStartPoint.y,
                             event.getHistoricalX(j + 1), event.getHistoricalY(j + 1),
                             mPaint).run();
 
@@ -102,15 +99,13 @@ public class PenTool implements ITool {
      * Runnable class draws a pen to a canvas.
      */
     private class PenDrawLineRunnable implements Runnable {
-        private Canvas mCanvas;
         private float mStartX;
         private float mEndX;
         private float mStartY;
         private float mEndY;
         private Paint mPaint;
 
-        public PenDrawLineRunnable(Canvas canvas, float startX, float startY, float endX, float endY, Paint paint) {
-            mCanvas = canvas;
+        public PenDrawLineRunnable(float startX, float startY, float endX, float endY, Paint paint) {
             mStartX = startX;
             mStartY = startY;
             mEndX = endX;
