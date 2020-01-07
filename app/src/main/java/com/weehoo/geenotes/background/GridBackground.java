@@ -11,6 +11,16 @@ import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.canvas.CanvasView;
 
 public class GridBackground implements IBackground {
+
+    private final String mText;
+
+    /**
+     * Constructs a Grid background object.
+     */
+    public GridBackground() {
+        mText = GeeNotesApplication.getContext().getResources().getString(R.string.background_text_grid);
+    }
+
     /**
      * Called when the background is selected as the background drawing.
      *
@@ -31,13 +41,23 @@ public class GridBackground implements IBackground {
     }
 
     /**
+     * Gets this background's text.
+     *
+     * @return The background's text.
+     */
+    @Override
+    public String getText() {
+        return mText;
+    }
+
+    /**
      * Get the background's active icon.
      *
      * @return This background's active icon res.
      */
     @Override
     public int getIconResActive() {
-        return 0;
+        return R.drawable.ic_page_menu_background_grid_active;
     }
 
     /**
@@ -47,7 +67,7 @@ public class GridBackground implements IBackground {
      */
     @Override
     public int getIconResInactive() {
-        return 0;
+        return R.drawable.ic_page_menu_background_grid_inactive;
     }
 
     /**

@@ -9,6 +9,12 @@ public interface IBackground {
     void onSelect(CanvasView canvasView);
 
     /**
+     * Gets this background's text.
+     * @return The background's text.
+     */
+    String getText();
+
+    /**
      * Get the background's active icon.
      * @return This background's active icon res.
      */

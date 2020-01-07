@@ -3,16 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.weehoo.geenotes.NoteActivity">
 
-    <group android:orderInCategory="@integer/note_menu_tools_group_order_min" android:id="@+id/note_menu_group_tools">
+    <group
+        android:id="@+id/note_menu_group_tools"
+        android:orderInCategory="@integer/note_menu_tools_group_order_min" >
     </group>
 
-    <group android:orderInCategory="@integer/note_menu_backgrounds_group_order_min" android:id="@+id/note_menu_group_backgrounds">
+    <group
+        android:id="@+id/note_menu_group_backgrounds"
+        android:orderInCategory="@integer/note_menu_backgrounds_group_order_min" >
         <item
             android:id="@+id/note_menu_background"
             android:title="@string/action_background"
             android:icon="@drawable/ic_page_menu_background"
             android:orderInCategory="@integer/note_menu_backgrounds_group_order_min"
-            app:showAsAction="always" />
+            app:showAsAction="always">
+            <menu></menu>
+        </item>
         <item
             android:title="|"
             android:orderInCategory="@integer/note_menu_backgrounds_group_order_max"
