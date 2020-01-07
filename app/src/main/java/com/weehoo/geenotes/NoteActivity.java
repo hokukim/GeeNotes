@@ -130,6 +130,11 @@ public class NoteActivity extends AppCompatActivity {
             // Drawing has changed.
             // Invalidate view so it can be redrawn.
             mCanvasView.invalidate();
+
+            if (event.getAction() == MotionEvent.ACTION_UP) {
+                // Auto save page data.
+                this.saveNotePageData();
+            }
         }
 
         return true;
@@ -382,11 +387,19 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     /**
-     * Saves current notebook and page to storage.
+     * Saves current notebook and page and data.
      */
     private void saveNoteBookData() {
-        // Save updated notebooks and page to storage.
+        // Save updated notebooks and page data.
         NoteBookDataContext.setNoteBooks(mStorage, mNoteBooks);
+        this.saveNotePageData();
+    }
+
+    /**
+     * Saves current page data.
+     */
+    private void saveNotePageData() {
+        // Save updated page data.
         NotePageDataContext.setNotePage(mStorage, mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex), mCanvasView.copyPrimaryBitmap());
     }
 
