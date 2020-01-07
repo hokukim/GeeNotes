@@ -26,9 +26,9 @@ import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.dataContext.NotePageDataContext;
 import com.weehoo.geenotes.menus.subMenus.NotePageBackgroundsSubMenu;
 import com.weehoo.geenotes.note.NoteBook;
-import com.weehoo.geenotes.note.NotePage;
 import com.weehoo.geenotes.storage.IStorage;
 import com.weehoo.geenotes.storage.Storage;
+import com.weehoo.geenotes.timers.RateLimiter;
 import com.weehoo.geenotes.tool.EraserTool;
 import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.PenTool;
@@ -55,9 +55,17 @@ public class NoteActivity extends AppCompatActivity {
     private  ArrayList<NoteBook> mNoteBooks;
     private int mNoteBookIndex;
     private int mNotePageIndex;
+
     private IStorage mStorage;
+    private RateLimiter mNotePageDataSaver;
 
     public NoteActivity() {
+        mNotePageDataSaver = new RateLimiter(new Runnable() {
+            @Override
+            public void run() {
+                saveNotePageData();
+            }
+        });
     }
 
     @Override
@@ -133,7 +141,7 @@ public class NoteActivity extends AppCompatActivity {
 
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 // Auto save page data.
-                this.saveNotePageData();
+                mNotePageDataSaver.run();
             }
         }
 
@@ -223,9 +231,6 @@ public class NoteActivity extends AppCompatActivity {
         int itemId = item.getItemId();
 
         if (itemId == android.R.id.home) {
-            // Save current page.
-            saveNoteBookData();
-
             // Go back.
             return super.onOptionsItemSelected(item);
         }
@@ -399,7 +404,7 @@ public class NoteActivity extends AppCompatActivity {
      * Saves current page data.
      */
     private void saveNotePageData() {
-        // Save updated page data.
+        // Save current page data.
         NotePageDataContext.setNotePage(mStorage, mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex), mCanvasView.copyPrimaryBitmap());
     }
 
