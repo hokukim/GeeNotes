@@ -1,6 +1,7 @@
 <resources>
     <!-- Application -->
     <string name="app_name">Gee Notes</string>
+    <string name="menu_divider">|</string>
 
     <!-- Main activity -->
     <string name="action_settings">Settings</string>
@@ -32,4 +33,5 @@
 
     <!-- Background texts -->
     <string name="background_text_grid">Grid</string>
+    <string name="background_text_empty">None</string>
 </resources>

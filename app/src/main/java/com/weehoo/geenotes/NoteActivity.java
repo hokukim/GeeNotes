@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.weehoo.geenotes.background.EmptyBackground;
 import com.weehoo.geenotes.background.GridBackground;
 import com.weehoo.geenotes.background.IBackground;
 import com.weehoo.geenotes.canvas.CanvasView;
@@ -49,6 +50,7 @@ public class NoteActivity extends AppCompatActivity {
 
     // Backgrounds.
     private NotePageBackgroundsSubMenu mNotePageBackgroundsSubMenu;
+    private IBackground mBackground;
 
     private  ArrayList<NoteBook> mNoteBooks;
     private int mNoteBookIndex;
@@ -234,7 +236,12 @@ public class NoteActivity extends AppCompatActivity {
             mTool.onSelect(mCanvasView);
         }
         else if (groupId == R.id.note_menu_group_backgrounds && item.getOrder() == menuBackgroundsGroupOrder) {
-            mNotePageBackgroundsSubMenu.onOptionsItemSelected(item);
+            // Clear the previous background.
+            mCanvasView.clearBackground();
+
+            // Select the new background.
+            mBackground = mNotePageBackgroundsSubMenu.onOptionsItemSelected(item);
+            mBackground.onSelect(mCanvasView);
         }
         else if (groupId == R.id.note_menu_group_page) {
             if (itemId == R.id.note_menu_add_page) {
@@ -329,9 +336,14 @@ public class NoteActivity extends AppCompatActivity {
 
         // *** Add background here. ***
         backgrounds.add(new GridBackground());
+        backgrounds.add(new EmptyBackground());
         // ****************************
 
+        // Create backgrounds submenu.
         mNotePageBackgroundsSubMenu = new NotePageBackgroundsSubMenu(backgrounds);
+
+        // Set default background.
+        mBackground = mNotePageBackgroundsSubMenu.getBackground();
     }
 
     /**

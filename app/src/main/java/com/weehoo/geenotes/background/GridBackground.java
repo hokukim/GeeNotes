@@ -23,8 +23,7 @@ public class GridBackground implements IBackground {
 
     /**
      * Called when the background is selected as the background drawing.
-     *
-     * @param canvasView
+     * @param canvasView Canvas view which contains canvases on which to draw.
      */
     @Override
     public void onSelect(CanvasView canvasView) {

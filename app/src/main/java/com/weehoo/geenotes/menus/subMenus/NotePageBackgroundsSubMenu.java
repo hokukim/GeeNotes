@@ -17,7 +17,8 @@ public class NotePageBackgroundsSubMenu {
 
     public NotePageBackgroundsSubMenu(ArrayList<IBackground> backgrounds) {
         mBackgrounds = backgrounds;
-        mBackgroundsMap = new SparseArray<>();
+        mBackground = backgrounds.get(0);
+        mBackgroundsMap = new SparseArray<>(); // Populated in onCreateOptionsMenu.
     }
 
     /**
@@ -40,7 +41,7 @@ public class NotePageBackgroundsSubMenu {
 
         for (int i = 0; i < mBackgrounds.size(); i++) {
             IBackground background = mBackgrounds.get(i);
-            int iconRes = i == 0 ? background.getIconResActive() : background.getIconResActive();
+            int iconRes = i == 0 ? background.getIconResActive() : background.getIconResInactive();
 
             MenuItem menuItem = subMenu.add(groupId, i, order, background.getText());
             menuItem.setIcon(iconRes);
@@ -76,6 +77,7 @@ public class NotePageBackgroundsSubMenu {
         int itemId = item.getItemId();
         mBackground = mBackgroundsMap.get(itemId);
         mMenuItem = item;
+        mMenuItem.setIcon(mBackground.getIconResActive());
 
         return mBackground;
     }

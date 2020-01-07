@@ -20,7 +20,7 @@
             <menu />
         </item>
         <item
-            android:title="|"
+            android:title="@string/menu_divider"
             android:orderInCategory="@integer/note_menu_backgrounds_group_order_max"
             app:showAsAction="always" />
     </group>

@@ -15,7 +15,7 @@ import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.dimensions.StatusBar;
 
 public class CanvasView extends View {
-    public final Bitmap.Config bitmapConfig;
+    private final Bitmap.Config bitmapConfig;
 
     public Canvas backgroundCanvas;
     public Canvas primaryCanvas;
