@@ -18,10 +18,15 @@ import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
+import com.weehoo.geenotes.background.EmptyBackground;
+import com.weehoo.geenotes.background.GridBackground;
+import com.weehoo.geenotes.background.IBackground;
 import com.weehoo.geenotes.canvas.CanvasView;
 import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.dataContext.NotePageDataContext;
+import com.weehoo.geenotes.menus.subMenus.NotePageBackgroundsSubMenu;
 import com.weehoo.geenotes.note.NoteBook;
+import com.weehoo.geenotes.note.NotePage;
 import com.weehoo.geenotes.storage.IStorage;
 import com.weehoo.geenotes.storage.Storage;
 import com.weehoo.geenotes.tool.EraserTool;
@@ -29,25 +34,31 @@ import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 public class NoteActivity extends AppCompatActivity {
 
     public static final String NOTEBOOK_ID_EXTRA_KEY = "notebook_id_extra";
-    private final int MENU_TOOLS_GROUP_ORDER = 0;
 
     private CanvasView mCanvasView;
+
+    // Tools.
     private ArrayList<ITool> mTools;
     private SparseArray<ITool> mToolsMap;
     private ITool mTool;
     private MenuItem mToolMenuItem;
 
+    // Backgrounds.
+    private NotePageBackgroundsSubMenu mNotePageBackgroundsSubMenu;
+    private IBackground mBackground;
+
     private  ArrayList<NoteBook> mNoteBooks;
     private int mNoteBookIndex;
     private int mNotePageIndex;
     private IStorage mStorage;
+
+    public NoteActivity() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +84,16 @@ public class NoteActivity extends AppCompatActivity {
         mTool.onSelect(mCanvasView);
         mToolMenuItem = null;
 
+        // Register backgrounds.
+        this.registerBackgrounds();
+
         // Load notebooks after canvas view has been created and sized.
         mCanvasView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 mCanvasView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 mStorage = new Storage();
+
                 loadNoteBook();
             }
         });
@@ -120,17 +135,45 @@ public class NoteActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Initialize the contents of the Activity's standard options menu.  You
+     * should place your menu items in to <var>menu</var>.
+     *
+     * <p>This is only called once, the first time the options menu is
+     * displayed.  To update the menu every time it is displayed, see
+     * {@link #onPrepareOptionsMenu}.
+     *
+     * <p>The default implementation populates the menu with standard system
+     * menu items.  These are placed in the {@link Menu#CATEGORY_SYSTEM} group so that
+     * they will be correctly ordered with application-defined menu items.
+     * Deriving classes should always call through to the base implementation.
+     *
+     * <p>You can safely hold on to <var>menu</var> (and any items created
+     * from it), making modifications to it as desired, until the next
+     * time onCreateOptionsMenu() is called.
+     *
+     * <p>When you add items to the menu, you can implement the Activity's
+     * {@link #onOptionsItemSelected} method to handle them there.
+     *
+     * @param menu The options menu in which you place your items.
+     * @return You must return true for the menu to be displayed;
+     * if you return false it will not be shown.
+     * @see #onPrepareOptionsMenu
+     * @see #onOptionsItemSelected
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_note, menu);
 
         // Add tool menu items and group divider.
+        int menuToolsGroupOrder = getResources().getInteger(R.integer.note_menu_tools_group_order_min);
+
         for (int i = 0; i < mTools.size(); i++) {
             ITool tool = mTools.get(i);
             int iconRes = i == 0 ? tool.getIconResActive() : tool.getIconResInactive();
 
-            MenuItem item = menu.add(R.id.note_menu_group_tools, i, MENU_TOOLS_GROUP_ORDER, "");
+            MenuItem item = menu.add(R.id.note_menu_group_tools, i, menuToolsGroupOrder, "");
             item.setIcon(iconRes).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
             if (mToolMenuItem == null) {
@@ -138,17 +181,39 @@ public class NoteActivity extends AppCompatActivity {
             }
         }
 
-        menu.add(R.id.note_menu_group_tools, 0, MENU_TOOLS_GROUP_ORDER + 1, "|")
+        menu.add(R.id.note_menu_group_tools, 0, menuToolsGroupOrder + 1, "|")
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+        // Add backgrounds submenu items.
+        Menu backgroundsSubMenu = menu.findItem(R.id.note_menu_background).getSubMenu();
+        mNotePageBackgroundsSubMenu.onCreateOptionsMenu(backgroundsSubMenu, R.id.note_menu_group_backgrounds, getResources().getInteger(R.integer.note_menu_backgrounds_submenu_group_order_min));
 
         return true;
     }
 
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     * The default implementation simply returns false to have the normal
+     * processing happen (calling the item's Runnable or sending a message to
+     * its Handler as appropriate).  You can use this method for any items
+     * for which you would like to do processing without those other
+     * facilities.
+     *
+     * <p>Derived classes should call through to the base class for it to
+     * perform the default menu handling.</p>
+     *
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to
+     * proceed, true to consume it here.
+     * @see #onCreateOptionsMenu
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        int menuToolsGroupOrder = getResources().getInteger(R.integer.note_menu_tools_group_order_min);
+        int menuBackgroundsGroupOrder = getResources().getInteger(R.integer.note_menu_backgrounds_submenu_group_order_min);
         int groupId = item.getGroupId();
         int itemId = item.getItemId();
 
@@ -159,7 +224,7 @@ public class NoteActivity extends AppCompatActivity {
             // Go back.
             return super.onOptionsItemSelected(item);
         }
-        else if (groupId == R.id.note_menu_group_tools && item.getOrder() == MENU_TOOLS_GROUP_ORDER) {
+        else if (groupId == R.id.note_menu_group_tools && item.getOrder() == menuToolsGroupOrder) {
             // Deselect previous tool.
             mToolMenuItem.setIcon(mTool.getIconResInactive());
             mTool.onDeselect();
@@ -169,6 +234,14 @@ public class NoteActivity extends AppCompatActivity {
             mToolMenuItem = item;
             mToolMenuItem.setIcon(mTool.getIconResActive());
             mTool.onSelect(mCanvasView);
+        }
+        else if (groupId == R.id.note_menu_group_backgrounds && item.getOrder() == menuBackgroundsGroupOrder) {
+            // Clear the previous background.
+            mCanvasView.clearBackground();
+
+            // Select the new background.
+            mBackground = mNotePageBackgroundsSubMenu.onOptionsItemSelected(item);
+            mBackground.onSelect(mCanvasView);
         }
         else if (groupId == R.id.note_menu_group_page) {
             if (itemId == R.id.note_menu_add_page) {
@@ -258,6 +331,24 @@ public class NoteActivity extends AppCompatActivity {
         }
     }
 
+    private void registerBackgrounds() {
+        ArrayList<IBackground> backgrounds = new ArrayList<>();
+
+        // *** Add background here. ***
+        backgrounds.add(new GridBackground());
+        backgrounds.add(new EmptyBackground());
+        // ****************************
+
+        // Create backgrounds submenu.
+        mNotePageBackgroundsSubMenu = new NotePageBackgroundsSubMenu(backgrounds);
+
+        // Set default background.
+        mBackground = mNotePageBackgroundsSubMenu.getBackground();
+    }
+
+    /**
+     * Loads the current notebook and page.
+     */
     private void loadNoteBook() {
         mNoteBookIndex = 0;
         mNotePageIndex = 0;
@@ -308,6 +399,10 @@ public class NoteActivity extends AppCompatActivity {
 
         // Load new note page.
         mCanvasView.primaryCanvas.drawBitmap(pageBitmap, 0, 0, mCanvasView.primaryPaint);
+
+        // Draw background.
+        IBackground bg = new GridBackground();
+        bg.onSelect(mCanvasView);
     }
 
     private void updateStatusBar() {

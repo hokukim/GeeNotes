@@ -15,7 +15,7 @@ import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.dimensions.StatusBar;
 
 public class CanvasView extends View {
-    public final Bitmap.Config bitmapConfig;
+    private final Bitmap.Config bitmapConfig;
 
     public Canvas backgroundCanvas;
     public Canvas primaryCanvas;
@@ -108,12 +108,12 @@ public class CanvasView extends View {
      */
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
 
         // Draw in this order: background, primary, overlay.
         canvas.drawBitmap(mBackgroundBitmap, 0, 0, backgroundPaint);
         canvas.drawBitmap(mPrimaryBitmap, 0, 0, primaryPaint);
         canvas.drawBitmap(mOverlayBitmap, 0, 0, overlayPaint);
+        super.onDraw(canvas);
     }
 
     /**

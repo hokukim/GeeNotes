@@ -1,6 +1,7 @@
 <resources>
     <!-- Application -->
     <string name="app_name">Gee Notes</string>
+    <string name="menu_divider">|</string>
 
     <!-- Main activity -->
     <string name="action_settings">Settings</string>
@@ -11,7 +12,7 @@
 
     <!-- NoteBook delete confirmation -->
     <string name="notebook_delete_confirm_title">Delete notebook</string>
-    <string name="notebook_delete_confirm_message_spec">Notebook "%1$s" and all of its pages will be permanently deleted from this device.</string>
+    <string name="notebook_delete_confirm_message_spec">Notebook \"%1$s\" and all of its pages will be permanently deleted from this device.</string>
     <string name="notebook_delete_confirm_cancel">Cancel</string>
     <string name="notebook_delete_confirm_delete">Delete</string>
 
@@ -28,5 +29,9 @@
     <string name="action_previous_page">Previous page</string>
     <string name="action_next_page">Next page</string>
     <string name="action_delete_page">Delete page</string>
+    <string name="action_background">Background</string>
 
+    <!-- Background texts -->
+    <string name="background_text_grid">Grid</string>
+    <string name="background_text_empty">None</string>
 </resources>
