@@ -50,9 +50,10 @@ public class PenTool implements ITool {
 
                 // Draw lines between batched historical points.
                 for (int j = 1; j < event.getHistorySize() - 1; j++) {
-                    new PenDrawLineRunnable(mStartPoint.x, mStartPoint.y,
+                    Thread thread = new Thread(new PenDrawLineRunnable(mStartPoint.x, mStartPoint.y,
                             event.getHistoricalX(j + 1), event.getHistoricalY(j + 1),
-                            mPaint).run();
+                            mPaint));
+                    thread.start();
 
                     // Set start of next segment.
                     mStartPoint.x = event.getHistoricalX(j + 1);
@@ -62,7 +63,7 @@ public class PenTool implements ITool {
             }
             case MotionEvent.ACTION_UP: {
                 mStartPoint = null;
-                return false;
+                return true;
             }
         }
 

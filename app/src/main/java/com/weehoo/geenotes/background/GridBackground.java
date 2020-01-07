@@ -34,7 +34,8 @@ public class GridBackground implements IBackground {
         for (int x = 0; x < canvasView.getWidth(); x += bitmap.getWidth()) {
             for (int y = 0; y < canvasView.getHeight(); y += bitmap.getHeight()) {
                 // Draw to background canvas.
-                new GridBackgroundDrawRunnable(canvasView.backgroundCanvas, bitmap, x, y, canvasView.backgroundPaint).run();
+                Thread thread = new Thread(new GridBackgroundDrawRunnable(canvasView.backgroundCanvas, bitmap, x, y, canvasView.backgroundPaint));
+                thread.start();
             }
         }
     }

@@ -95,17 +95,8 @@ public class Storage implements IStorage {
      */
     @Override
     public void setFileBitmap(String fileName, Bitmap fileBitmap) {
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                FileOutputStream fileOutputStream = GeeNotesApplication.getContext().openFileOutput(fileName, Context.MODE_PRIVATE)) {
-
-            fileBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-            fileOutputStream.write(byteArrayOutputStream.toByteArray());
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Thread thread = new Thread(new SetFileBitmapRunnable(fileName, fileBitmap));
+        thread.start();
     }
 
     /**
@@ -115,5 +106,44 @@ public class Storage implements IStorage {
     @Override
     public void deleteFile(String fileName) {
         GeeNotesApplication.getContext().deleteFile(fileName);
+    }
+
+    /**
+     * Runnable class for concurrent bitmap storage.
+     */
+    private class SetFileBitmapRunnable implements Runnable {
+        private final String mFileName;
+        private final Bitmap mFileBitmap;
+
+        public SetFileBitmapRunnable(String fileName, Bitmap fileBitmap) {
+            mFileName = fileName;
+            mFileBitmap = fileBitmap;
+        }
+
+        /**
+         * When an object implementing interface <code>Runnable</code> is used
+         * to create a thread, starting the thread causes the object's
+         * <code>run</code> method to be called in that separately executing
+         * thread.
+         * <p>
+         * The general contract of the method <code>run</code> is that it may
+         * take any action whatsoever.
+         *
+         * @see Thread#run()
+         */
+        @Override
+        public void run() {
+            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                 FileOutputStream fileOutputStream = GeeNotesApplication.getContext().openFileOutput(mFileName, Context.MODE_PRIVATE)) {
+
+                mFileBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                fileOutputStream.write(byteArrayOutputStream.toByteArray());
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
