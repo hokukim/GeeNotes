@@ -3,23 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.weehoo.geenotes.NoteActivity">
 
-    <group android:orderInCategory="0" android:id="@+id/note_menu_group_tools">
+    <group android:orderInCategory="@integer/note_menu_tools_group_order_min" android:id="@+id/note_menu_group_tools">
     </group>
 
-    <group android:orderInCategory="100" android:id="@+id/note_menu_group_page">
-        <item android:id="@+id/note_menu_add_page"
+    <group android:orderInCategory="@integer/note_menu_backgrounds_group_order_min" android:id="@+id/note_menu_group_backgrounds">
+        <item
+            android:id="@+id/note_menu_background"
+            android:title="@string/action_background"
+            android:icon="@drawable/ic_page_menu_background"
+            android:orderInCategory="@integer/note_menu_backgrounds_group_order_min"
+            app:showAsAction="always" />
+        <item
+            android:title="|"
+            android:orderInCategory="@integer/note_menu_backgrounds_group_order_max"
+            app:showAsAction="always" />
+    </group>
+
+    <group android:orderInCategory="@integer/note_menu_pages_group_order_min" android:id="@+id/note_menu_group_page">
+        <item
+            android:id="@+id/note_menu_add_page"
             android:title="@string/action_add_page"
             android:icon="@drawable/ic_page_menu_add"
             app:showAsAction="always" />
-        <item android:id="@+id/note_menu_previous_page"
+        <item
+            android:id="@+id/note_menu_previous_page"
             android:title="@string/action_previous_page"
             android:icon="@drawable/ic_page_menu_previous"
             app:showAsAction="always" />
-        <item android:id="@+id/note_menu_next_page"
+        <item
+            android:id="@+id/note_menu_next_page"
             android:title="@string/action_next_page"
             android:icon="@drawable/ic_page_menu_next"
-            app:showAsAction="always"/>
-        <item android:id="@+id/note_menu_delete_page"
+            app:showAsAction="always" />
+        <item
+            android:id="@+id/note_menu_delete_page"
             android:title="@string/action_delete_page"
             app:showAsAction="never" />
     </group>

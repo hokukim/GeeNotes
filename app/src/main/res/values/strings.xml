@@ -28,5 +28,5 @@
     <string name="action_previous_page">Previous page</string>
     <string name="action_next_page">Next page</string>
     <string name="action_delete_page">Delete page</string>
-
+    <string name="action_background">Background</string>
 </resources>

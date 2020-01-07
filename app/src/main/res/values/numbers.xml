@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Note activity menu orders -->
+    <integer name="note_menu_tools_group_order_min">0</integer>
+    <integer name="note_menu_tools_group_order_max">99</integer>
+    <integer name="note_menu_backgrounds_group_order_min">300</integer>
+    <integer name="note_menu_backgrounds_group_order_max">399</integer>
+    <integer name="note_menu_pages_group_order_min">600</integer>
+    <integer name="note_menu_pages_group_order_max">699</integer>
+</resources>
