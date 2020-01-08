@@ -116,6 +116,8 @@ public class SelectionTool implements ITool {
                 if (mStartPoint == null) {
                     // Start new selection rectangle.
                     mStartPoint = touchPoint;
+                    mStartPoint.x = Math.max(mStartPoint.x, 0);
+                    mStartPoint.y = Math.max(mStartPoint.y, 0);
                 }
             } break;
             case MotionEvent.ACTION_UP: {
@@ -163,6 +165,10 @@ public class SelectionTool implements ITool {
                 if (mEndPoint == null) {
                     // End new selection rectangle.
                     mEndPoint = touchPoint;
+
+                    mEndPoint.x = Math.max(mEndPoint.x, 0);
+                    mEndPoint.x = Math.min(mEndPoint.x, mCanvasView.primaryCanvas.getWidth());
+                    mEndPoint.y = Math.max(mEndPoint.y, 0);
                 }
 
                 // Draw selector UI.
@@ -186,6 +192,20 @@ public class SelectionTool implements ITool {
                             mSelectionRect.top + yDiff,
                             mSelectionRect.right + xDiff,
                             mSelectionRect.bottom + yDiff);
+
+                    // Adjust destination rect boundaries.
+                    if (toRect.left < 0) {
+                        toRect.left = 0;
+                        toRect.right = mSelectionRect.right;
+                    }
+                    if (toRect.top < 0) {
+                        toRect.top = 0;
+                        toRect.bottom = mSelectionRect.bottom;
+                    }
+
+                    if (toRect.right > mCanvasView.primaryCanvas.getWidth()) {
+                        toRect.right = mCanvasView.primaryCanvas.getWidth();
+                    }
 
                     // Move selection UI and redraw.
                     mStartPoint = new PointF(toRect.left, toRect.top);
@@ -217,6 +237,10 @@ public class SelectionTool implements ITool {
 
                 // Draw new selection UI without menu.
                 mEndPoint = touchPoint;
+                mEndPoint.x = Math.max(mEndPoint.x, 0);
+                mEndPoint.x = Math.min(mEndPoint.x, mCanvasView.primaryCanvas.getWidth());
+                mEndPoint.y = Math.max(mEndPoint.y, 0);
+
                 this.drawSelectionUI(false);
             } break;
         }
