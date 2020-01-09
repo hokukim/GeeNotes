@@ -116,6 +116,8 @@ public class SelectionTool implements ITool {
                 if (mStartPoint == null) {
                     // Start new selection rectangle.
                     mStartPoint = touchPoint;
+                    this.setInBounds(mStartPoint);
+                    mEndPoint = mStartPoint;
                 }
             } break;
             case MotionEvent.ACTION_UP: {
@@ -163,6 +165,7 @@ public class SelectionTool implements ITool {
                 if (mEndPoint == null) {
                     // End new selection rectangle.
                     mEndPoint = touchPoint;
+                    this.setInBounds(mEndPoint);
                 }
 
                 // Draw selector UI.
@@ -186,6 +189,25 @@ public class SelectionTool implements ITool {
                             mSelectionRect.top + yDiff,
                             mSelectionRect.right + xDiff,
                             mSelectionRect.bottom + yDiff);
+
+                    // Adjust destination rect boundaries.
+                    if (toRect.left < 0) {
+                        toRect.left = 0;
+                        toRect.right = mSelectionRect.right;
+                    }
+                    if (toRect.top < 0) {
+                        toRect.top = 0;
+                        toRect.bottom = mSelectionRect.bottom;
+                    }
+
+                    if (toRect.right > mCanvasView.primaryCanvas.getWidth()) {
+                        toRect.right = mCanvasView.primaryCanvas.getWidth();
+                        toRect.left = mSelectionRect.left;
+                    }
+                    if (toRect.bottom > mCanvasView.primaryCanvas.getHeight()) {
+                        toRect.bottom = mCanvasView.primaryCanvas.getHeight();
+                        toRect.top = mSelectionRect.top;
+                    }
 
                     // Move selection UI and redraw.
                     mStartPoint = new PointF(toRect.left, toRect.top);
@@ -217,6 +239,8 @@ public class SelectionTool implements ITool {
 
                 // Draw new selection UI without menu.
                 mEndPoint = touchPoint;
+                this.setInBounds(mEndPoint);
+
                 this.drawSelectionUI(false);
             } break;
         }
@@ -259,6 +283,17 @@ public class SelectionTool implements ITool {
     @Override
     public int getIconResInactive() {
         return R.drawable.ic_tool_menu_selection_inactive;
+    }
+
+    /**
+     * Adjusts the point to be within the bounds of the drawing canvas.
+     * @param point Point to adjust.
+     */
+    private void setInBounds(PointF point) {
+        point.x = Math.max(point.x, 0);
+        point.x = Math.min(point.x, mCanvasView.primaryCanvas.getWidth());
+        point.y = Math.max(point.y, 0);
+        point.y = Math.min(point.y, mCanvasView.primaryCanvas.getHeight());
     }
 
     /**
