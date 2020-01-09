@@ -63,7 +63,7 @@ public class NoteActivity extends AppCompatActivity {
         mNotePageDataSaver = new RateLimiter(new Runnable() {
             @Override
             public void run() {
-                saveNotePageData();
+                saveNotePageData(true);
             }
         });
     }
@@ -401,11 +401,25 @@ public class NoteActivity extends AppCompatActivity {
     }
 
     /**
-     * Saves current page data.
+     * Saves current page data synchronously.
      */
     private void saveNotePageData() {
-        // Save current page data.
-        NotePageDataContext.setNotePage(mStorage, mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex), mCanvasView.copyPrimaryBitmap());
+        this.saveNotePageData(false);
+    }
+
+    /**
+     * Saves current page data with the specified concurrency.
+     * @param runAsync True to run asynchronously, false to run synchronously
+     */
+    private void saveNotePageData(boolean runAsync) {
+        if (runAsync) {
+            // Save current page data asynchronously.
+            new Thread(new SaveNotePageDataRunnable()).start();
+        }
+        else {
+            // Save current page data synchronously.
+            new SaveNotePageDataRunnable().run();
+        }
     }
 
     /**
@@ -488,5 +502,26 @@ public class NoteActivity extends AppCompatActivity {
                     }
                 })
                 .create();
+    }
+
+    /**
+     * Runnable class to save note page data asynchronously.
+     */
+    private class SaveNotePageDataRunnable implements Runnable {
+        /**
+         * When an object implementing interface <code>Runnable</code> is used
+         * to create a thread, starting the thread causes the object's
+         * <code>run</code> method to be called in that separately executing
+         * thread.
+         * <p>
+         * The general contract of the method <code>run</code> is that it may
+         * take any action whatsoever.
+         *
+         * @see Thread#run()
+         */
+        @Override
+        public void run() {
+            NotePageDataContext.setNotePage(mStorage, mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex), mCanvasView.copyPrimaryBitmap());
+        }
     }
 }
