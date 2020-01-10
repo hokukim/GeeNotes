@@ -30,6 +30,7 @@ import com.weehoo.geenotes.dataContext.NotePageDataContext;
 import com.weehoo.geenotes.menus.subMenus.NotePageBackgroundsSubMenu;
 import com.weehoo.geenotes.note.NoteBook;
 import com.weehoo.geenotes.note.NotePage;
+import com.weehoo.geenotes.social.Sharing;
 import com.weehoo.geenotes.storage.IStorage;
 import com.weehoo.geenotes.storage.Storage;
 import com.weehoo.geenotes.timers.RateLimiter;
@@ -314,18 +315,9 @@ public class NoteActivity extends AppCompatActivity {
                 // Get note page file URI.
                 NotePage notePage = mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex);
                 File file = NotePageDataContext.getNotePageFile(mStorage, notePage);
-                Uri fileUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
+                Uri fileUri = FileProvider.getUriForFile(this, getPackageName(), file);
 
-                // Create share intent.
-                Intent shareIntent = new Intent();
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
-                shareIntent.setType(getContentResolver().getType(fileUri));
-
-                // Start chooser intent activity.
-                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.action_share_page)));
+                Sharing.sendFile(this, fileUri, getResources().getString(R.string.action_send_page));
             }
         }
 
