@@ -2,14 +2,18 @@ package com.weehoo.geenotes;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 
 import android.util.SparseArray;
 import android.view.MotionEvent;
@@ -34,7 +38,10 @@ import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -222,6 +229,7 @@ public class NoteActivity extends AppCompatActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -307,9 +315,36 @@ public class NoteActivity extends AppCompatActivity {
                 NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
                 getDeleteNotePageConfirmationDialog().show();
             }
+            else if (itemId == R.id.note_menu_share_page) {
+                Intent shareIntent = new Intent();
+
+                String fileName = mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex).getID();
+                //File filesPath = new File(getFilesDir(), "files");
+                File file = new File(getFilesDir(), fileName);
+                Uri fileUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
+
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+                shareIntent.setType("image/png");
+                startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.action_share_page)));
+            }
         }
 
         return true;
+    }
+
+    /**
+     * Dispatch incoming result to the correct fragment.
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
