@@ -8,7 +8,6 @@ import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +29,7 @@ import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.dataContext.NotePageDataContext;
 import com.weehoo.geenotes.menus.subMenus.NotePageBackgroundsSubMenu;
 import com.weehoo.geenotes.note.NoteBook;
+import com.weehoo.geenotes.note.NotePage;
 import com.weehoo.geenotes.storage.IStorage;
 import com.weehoo.geenotes.storage.Storage;
 import com.weehoo.geenotes.timers.RateLimiter;
@@ -39,9 +39,7 @@ import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class NoteActivity extends AppCompatActivity {
 
@@ -273,8 +271,7 @@ public class NoteActivity extends AppCompatActivity {
                 saveNoteBookData();
                 loadCanvasViewNotePage();
                 updateStatusBar();
-            }
-            else if (itemId == R.id.note_menu_previous_page) {
+            } else if (itemId == R.id.note_menu_previous_page) {
                 // Save current page.
                 saveNoteBookData();
                 mCanvasView.clearPrimary();
@@ -292,8 +289,7 @@ public class NoteActivity extends AppCompatActivity {
                 // Load the previous page.
                 loadCanvasViewNotePage();
                 updateStatusBar();
-            }
-            else if (itemId == R.id.note_menu_next_page) {
+            } else if (itemId == R.id.note_menu_next_page) {
                 // Save current page.
                 saveNoteBookData();
                 mCanvasView.clearPrimary();
@@ -310,41 +306,30 @@ public class NoteActivity extends AppCompatActivity {
                 // Load the next page.
                 loadCanvasViewNotePage();
                 updateStatusBar();
-            }
-            else if (itemId == R.id.note_menu_delete_page) {
+            } else if (itemId == R.id.note_menu_delete_page) {
                 NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
                 getDeleteNotePageConfirmationDialog().show();
             }
             else if (itemId == R.id.note_menu_share_page) {
-                Intent shareIntent = new Intent();
-
-                String fileName = mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex).getID();
-                //File filesPath = new File(getFilesDir(), "files");
-                File file = new File(getFilesDir(), fileName);
+                // Get note page file URI.
+                NotePage notePage = mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex);
+                File file = NotePageDataContext.getNotePageFile(mStorage, notePage);
                 Uri fileUri = FileProvider.getUriForFile(this, getPackageName() + ".fileprovider", file);
 
+                // Create share intent.
+                Intent shareIntent = new Intent();
                 shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 shareIntent.setAction(Intent.ACTION_SEND);
                 shareIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
-                shareIntent.setType("image/png");
+                shareIntent.setType(getContentResolver().getType(fileUri));
+
+                // Start chooser intent activity.
                 startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.action_share_page)));
             }
         }
 
         return true;
-    }
-
-    /**
-     * Dispatch incoming result to the correct fragment.
-     *
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**

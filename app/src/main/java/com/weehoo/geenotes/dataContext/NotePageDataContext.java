@@ -2,8 +2,12 @@ package com.weehoo.geenotes.dataContext;
 
 import android.graphics.Bitmap;
 
+import com.weehoo.geenotes.GeeNotesApplication;
 import com.weehoo.geenotes.note.NotePage;
 import com.weehoo.geenotes.storage.IStorage;
+
+import java.io.File;
+import java.util.UUID;
 
 public class NotePageDataContext {
 
@@ -26,6 +30,10 @@ public class NotePageDataContext {
      */
     public static Bitmap getNotePage(IStorage storage, NotePage notePage) {
         return storage.getFileBitmap(notePage.getID());
+    }
+
+    public static File getNotePageFile(IStorage storage, NotePage notePage) {
+        return new File(GeeNotesApplication.getContext().getFilesDir(), notePage.getID());
     }
 
     /**
