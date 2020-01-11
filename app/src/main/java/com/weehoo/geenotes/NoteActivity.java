@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.FileProvider;
 
 import android.util.SparseArray;
 import android.view.MotionEvent;
@@ -26,6 +28,8 @@ import com.weehoo.geenotes.dataContext.NoteBookDataContext;
 import com.weehoo.geenotes.dataContext.NotePageDataContext;
 import com.weehoo.geenotes.menus.subMenus.NotePageBackgroundsSubMenu;
 import com.weehoo.geenotes.note.NoteBook;
+import com.weehoo.geenotes.note.NotePage;
+import com.weehoo.geenotes.social.Sharing;
 import com.weehoo.geenotes.storage.IStorage;
 import com.weehoo.geenotes.storage.Storage;
 import com.weehoo.geenotes.timers.RateLimiter;
@@ -34,6 +38,7 @@ import com.weehoo.geenotes.tool.ITool;
 import com.weehoo.geenotes.tool.PenTool;
 import com.weehoo.geenotes.tool.SelectionTool;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class NoteActivity extends AppCompatActivity {
@@ -222,6 +227,7 @@ public class NoteActivity extends AppCompatActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -265,8 +271,7 @@ public class NoteActivity extends AppCompatActivity {
                 saveNoteBookData();
                 loadCanvasViewNotePage();
                 updateStatusBar();
-            }
-            else if (itemId == R.id.note_menu_previous_page) {
+            } else if (itemId == R.id.note_menu_previous_page) {
                 // Save current page.
                 saveNoteBookData();
                 mCanvasView.clearPrimary();
@@ -284,8 +289,7 @@ public class NoteActivity extends AppCompatActivity {
                 // Load the previous page.
                 loadCanvasViewNotePage();
                 updateStatusBar();
-            }
-            else if (itemId == R.id.note_menu_next_page) {
+            } else if (itemId == R.id.note_menu_next_page) {
                 // Save current page.
                 saveNoteBookData();
                 mCanvasView.clearPrimary();
@@ -302,10 +306,17 @@ public class NoteActivity extends AppCompatActivity {
                 // Load the next page.
                 loadCanvasViewNotePage();
                 updateStatusBar();
-            }
-            else if (itemId == R.id.note_menu_delete_page) {
+            } else if (itemId == R.id.note_menu_delete_page) {
                 NoteBook noteBook = mNoteBooks.get(mNoteBookIndex);
                 getDeleteNotePageConfirmationDialog().show();
+            }
+            else if (itemId == R.id.note_menu_share_page) {
+                // Get note page file URI.
+                NotePage notePage = mNoteBooks.get(mNoteBookIndex).getPage(mNotePageIndex);
+                File file = NotePageDataContext.getNotePageFile(mStorage, notePage);
+                Uri fileUri = FileProvider.getUriForFile(this, getPackageName(), file);
+
+                Sharing.sendFile(this, fileUri, getResources().getString(R.string.action_send_page));
             }
         }
 
