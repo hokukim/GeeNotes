@@ -2,7 +2,6 @@ package com.weehoo.geenotes;
 
 import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.net.Uri;
