@@ -7,7 +7,6 @@ import com.weehoo.geenotes.note.NotePage;
 import com.weehoo.geenotes.storage.IStorage;
 
 import java.io.File;
-import java.util.UUID;
 
 public class NotePageDataContext {
 
