@@ -43,7 +43,7 @@
             app:showAsAction="always" />
         <item
             android:id="@+id/note_menu_share_page"
-            android:title="@string/action_share_page"
+            android:title="@string/action_send_page"
             android:icon="@drawable/ic_page_menu_share"
             app:showAsAction="never" />
         <item

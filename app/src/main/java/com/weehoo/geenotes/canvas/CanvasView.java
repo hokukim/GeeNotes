@@ -167,7 +167,7 @@ public class CanvasView extends View {
         primaryPaint = new Paint();
         primaryPaint.setColor(Color.BLACK);
         primaryPaint.setStyle(Paint.Style.STROKE);
-        primaryPaint.setStrokeWidth(6);
+        primaryPaint.setStrokeWidth(4);
         primaryPaint.setStrokeCap(Paint.Cap.ROUND);
         primaryPaint.setStrokeJoin(Paint.Join.ROUND);
         primaryPaint.setAntiAlias(true);
