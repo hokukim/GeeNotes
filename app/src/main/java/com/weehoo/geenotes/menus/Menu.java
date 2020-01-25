@@ -102,14 +102,26 @@ public class Menu {
             } break;
         }
 
+        // Calculate right menu offset (to prevent right menu from overlapping with left menu.
+        float rightOffset = 0;
+        float leftEnd = rect.left + (mLeftItems.size() * MENU_ITEM_WIDTH);
+        float rightStart = rect.right - (mRightItems.size() * MENU_ITEM_WIDTH);
+
+        if (leftEnd > rightStart) {
+            rightOffset = leftEnd + 1;
+        }
+
         // Draw left and right menu items concurrently.
         List<Thread> waiters = new ArrayList<>();
+        float leftMenuEnd = mRect.left; // Minimum left edge of right menu.
 
         for (int i = 0; i < mLeftItems.size(); i++) {
             // Calculate item rect.
             float xTranslate = i * MENU_ITEM_WIDTH;  // x translation from rect left edge.
             float left = mRect.left + xTranslate;
             RectF itemRect = new RectF(left, mRect.top, left + MENU_ITEM_WIDTH, mRect.bottom);
+
+            leftMenuEnd = itemRect.right;
 
             // Draw left item.
             Thread waiter = new Thread(new MenuItemDrawRunnable(canvas, itemRect, mLeftItems.get(i).getBitmap(), paint));
@@ -118,8 +130,11 @@ public class Menu {
         }
 
         for (int i = 0; i < mRightItems.size(); i++) {
-            float xTranslate = (mRightItems.size() - i) * MENU_ITEM_WIDTH; // x translation from rect right edge.
-            float left = mRect.right - xTranslate;
+
+            float left = leftMenuEnd + (i * MENU_ITEM_WIDTH); // Left align, but not overlapping left menu end.
+            float left2 = mRect.right - ((mRightItems.size() - i ) * MENU_ITEM_WIDTH); // Right align.
+            left = Math.max(left, left2);
+
             RectF itemRect = new RectF(left, mRect.top, left + MENU_ITEM_WIDTH, mRect.bottom);
 
             // Draw right item.
