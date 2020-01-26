@@ -23,6 +23,9 @@ public class Menu {
     private ArrayList<MenuItem> mLeftItems;
     private ArrayList<MenuItem> mRightItems;
 
+    private float mRightMenuStart = 0;
+    private float mRightMenuEnd = 0;
+
     /**
      * Default constructor.
      */
@@ -69,9 +72,9 @@ public class Menu {
                 menuItem = mLeftItems.get(index);
             }
             else if (mRightItems != null && mRightItems.size() > 0 &&
-                    point.x <= mRect.right && point.x >= mRect.right - (mRightItems.size() * MENU_ITEM_WIDTH)) {
+                    point.x <= mRightMenuEnd && point.x >= mRightMenuStart) {
                 // Event occurred in right menu.
-                int index = (int)((point.x - (mRect.right - (mRightItems.size() * MENU_ITEM_WIDTH))) / MENU_ITEM_WIDTH);
+                int index = (int)((point.x - mRightMenuStart) / MENU_ITEM_WIDTH);
                 menuItem = mRightItems.get(index);
             }
         }
@@ -129,13 +132,16 @@ public class Menu {
             waiters.add(waiter);
         }
 
+        float left1 = mRect.right - ((mRightItems.size()) * MENU_ITEM_WIDTH); // Right align.
+        mRightMenuStart = Math.max(leftMenuEnd, left1);
+
         for (int i = 0; i < mRightItems.size(); i++) {
 
-            float left = leftMenuEnd + (i * MENU_ITEM_WIDTH); // Left align, but not overlapping left menu end.
-            float left2 = mRect.right - ((mRightItems.size() - i ) * MENU_ITEM_WIDTH); // Right align.
-            left = Math.max(left, left2);
+            float left = mRightMenuStart + (i * MENU_ITEM_WIDTH);
+            float right = left + MENU_ITEM_WIDTH;
+            RectF itemRect = new RectF(left, mRect.top, right, mRect.bottom);
 
-            RectF itemRect = new RectF(left, mRect.top, left + MENU_ITEM_WIDTH, mRect.bottom);
+            mRightMenuEnd = right;
 
             // Draw right item.
             Thread waiter = new Thread(new MenuItemDrawRunnable(canvas, itemRect, mRightItems.get(i).getBitmap(), paint));
