@@ -23,6 +23,9 @@ public class Menu {
     private ArrayList<MenuItem> mLeftItems;
     private ArrayList<MenuItem> mRightItems;
 
+    private float mRightMenuStart = 0;
+    private float mRightMenuEnd = 0;
+
     /**
      * Default constructor.
      */
@@ -69,9 +72,9 @@ public class Menu {
                 menuItem = mLeftItems.get(index);
             }
             else if (mRightItems != null && mRightItems.size() > 0 &&
-                    point.x <= mRect.right && point.x >= mRect.right - (mRightItems.size() * MENU_ITEM_WIDTH)) {
+                    point.x <= mRightMenuEnd && point.x >= mRightMenuStart) {
                 // Event occurred in right menu.
-                int index = (int)((point.x - (mRect.right - (mRightItems.size() * MENU_ITEM_WIDTH))) / MENU_ITEM_WIDTH);
+                int index = (int)((point.x - mRightMenuStart) / MENU_ITEM_WIDTH);
                 menuItem = mRightItems.get(index);
             }
         }
@@ -102,8 +105,18 @@ public class Menu {
             } break;
         }
 
+        // Calculate right menu offset (to prevent right menu from overlapping with left menu.
+        float rightOffset = 0;
+        float leftEnd = rect.left + (mLeftItems.size() * MENU_ITEM_WIDTH);
+        float rightStart = rect.right - (mRightItems.size() * MENU_ITEM_WIDTH);
+
+        if (leftEnd > rightStart) {
+            rightOffset = leftEnd + 1;
+        }
+
         // Draw left and right menu items concurrently.
         List<Thread> waiters = new ArrayList<>();
+        float leftMenuEnd = mRect.left; // Minimum left edge of right menu.
 
         for (int i = 0; i < mLeftItems.size(); i++) {
             // Calculate item rect.
@@ -111,16 +124,24 @@ public class Menu {
             float left = mRect.left + xTranslate;
             RectF itemRect = new RectF(left, mRect.top, left + MENU_ITEM_WIDTH, mRect.bottom);
 
+            leftMenuEnd = itemRect.right;
+
             // Draw left item.
             Thread waiter = new Thread(new MenuItemDrawRunnable(canvas, itemRect, mLeftItems.get(i).getBitmap(), paint));
             waiter.start();
             waiters.add(waiter);
         }
 
+        float left1 = mRect.right - ((mRightItems.size()) * MENU_ITEM_WIDTH); // Right align.
+        mRightMenuStart = Math.max(leftMenuEnd, left1);
+
         for (int i = 0; i < mRightItems.size(); i++) {
-            float xTranslate = (mRightItems.size() - i) * MENU_ITEM_WIDTH; // x translation from rect right edge.
-            float left = mRect.right - xTranslate;
-            RectF itemRect = new RectF(left, mRect.top, left + MENU_ITEM_WIDTH, mRect.bottom);
+
+            float left = mRightMenuStart + (i * MENU_ITEM_WIDTH);
+            float right = left + MENU_ITEM_WIDTH;
+            RectF itemRect = new RectF(left, mRect.top, right, mRect.bottom);
+
+            mRightMenuEnd = right;
 
             // Draw right item.
             Thread waiter = new Thread(new MenuItemDrawRunnable(canvas, itemRect, mRightItems.get(i).getBitmap(), paint));
