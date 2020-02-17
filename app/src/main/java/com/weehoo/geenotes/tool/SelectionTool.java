@@ -42,10 +42,13 @@ public class SelectionTool implements ITool {
     private boolean mMenuIsOpen;
     private Bitmap mCopiedBitmap;
 
+    private boolean mIsActive;
+
     /**
      * Constructor.
      */
     public SelectionTool() {
+        mIsActive = false;
         mStartPoint = null;
         mEndPoint = null;
         mSelectionRect = null;
@@ -82,6 +85,8 @@ public class SelectionTool implements ITool {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
+                mIsActive = true;
+
                 // Check if down action on a menu item.
                 if (mMenuIsOpen) {
                     MenuItem menuItem = this.getMenuItemSelected(touchPoint);
@@ -121,6 +126,8 @@ public class SelectionTool implements ITool {
                 }
             } break;
             case MotionEvent.ACTION_UP: {
+                mIsActive = false;
+
                 if (mActiveMenuItem != null && mActiveMenuItem.getType() == MenuItemType.MENU_ITEM_TYPE_MOVE) {
                     // Selection moving is complete.
                     // Draw copied bitmap back to primary.
@@ -172,6 +179,8 @@ public class SelectionTool implements ITool {
                 this.drawSelectionUI();
             } break;
             case MotionEvent.ACTION_MOVE: {
+                mIsActive = true;
+
                 // Check if currently moving selection.
                 if (mActiveMenuItem != null && mActiveMenuItem.getType() == MenuItemType.MENU_ITEM_TYPE_MOVE) {
                     // Selection is being moved.

@@ -105,7 +105,7 @@ public class Menu {
             } break;
         }
 
-        // Calculate right menu offset (to prevent right menu from overlapping with left menu.
+        // Calculate right menu offset (to prevent right menu from overlapping with left menu).
         float rightOffset = 0;
         float leftEnd = rect.left + (mLeftItems.size() * MENU_ITEM_WIDTH);
         float rightStart = rect.right - (mRightItems.size() * MENU_ITEM_WIDTH);
@@ -133,7 +133,7 @@ public class Menu {
         }
 
         float left1 = mRect.right - ((mRightItems.size()) * MENU_ITEM_WIDTH); // Right align.
-        mRightMenuStart = Math.max(leftMenuEnd, left1);
+        mRightMenuStart = Math.max(leftMenuEnd, left1); // Right align or start right menu where left menu ends, to prevent overlap.
 
         for (int i = 0; i < mRightItems.size(); i++) {
 
