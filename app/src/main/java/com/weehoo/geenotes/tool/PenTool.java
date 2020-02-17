@@ -9,9 +9,16 @@ import com.weehoo.geenotes.canvas.CanvasView;
 
 public class PenTool implements ITool {
 
+    protected float mPaintStrokePressureMulitplier = 4.5f;
+    protected float mPaintStrokeWidthBase = 0.1f;
+
     protected Paint mPaint;
     private CanvasView mCanvasView;
     private PointF mStartPoint;
+
+    public PenTool() {
+        mPaint = new Paint();
+    }
 
     /**
      * Called when the tool is selected as the primary drawing tool.
@@ -21,7 +28,7 @@ public class PenTool implements ITool {
     @Override
     public void onSelect(CanvasView canvasView) {
         mCanvasView = canvasView;
-        mPaint = mCanvasView.primaryPaint;
+        mPaint.set(mCanvasView.primaryPaint);
         mStartPoint = null;
     }
 
@@ -37,6 +44,8 @@ public class PenTool implements ITool {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
                 mStartPoint = new PointF(event.getX(), event.getY());
+                Paint paint = new Paint(mPaint);
+                paint.setStrokeWidth(this.getPressuredStrokeWidth(event.getPressure()));
                 mCanvasView.primaryCanvas.drawPoint(mStartPoint.x, mStartPoint.y, mPaint);
                 return true;
             }
@@ -44,15 +53,19 @@ public class PenTool implements ITool {
                 if (mStartPoint == null) {
                     // For some reason it's possible that the ACTION_DOWN event didn't fire, so set the first down event here.
                     mStartPoint = new PointF(event.getX(), event.getY());
+                    Paint paint = new Paint(mPaint);
+                    paint.setStrokeWidth(this.getPressuredStrokeWidth(event.getPressure()));
                     mCanvasView.primaryCanvas.drawPoint(mStartPoint.x, mStartPoint.y, mPaint);
                     return true;
                 }
 
                 // Draw lines between batched historical points.
                 for (int j = 1; j < event.getHistorySize() - 1; j++) {
+                    Paint paint = new Paint(mPaint);
+                    paint.setStrokeWidth(this.getPressuredStrokeWidth(event.getHistoricalPressure(j + 1)));
                     Thread thread = new Thread(new PenDrawLineRunnable(mStartPoint.x, mStartPoint.y,
                             event.getHistoricalX(j + 1), event.getHistoricalY(j + 1),
-                            mPaint));
+                            paint));
                     thread.start();
 
                     // Set start of next segment.
@@ -77,6 +90,7 @@ public class PenTool implements ITool {
     public void onDeselect() {
         // Do nothing.
     }
+
     /**
      * Called to get tool's active icon.
      * @return This tool's active icon res.
@@ -95,6 +109,9 @@ public class PenTool implements ITool {
         return R.drawable.ic_tool_menu_pen_inactive;
     }
 
+    private float getPressuredStrokeWidth(float pressure) {
+        return mPaintStrokeWidthBase + (pressure * mPaintStrokePressureMulitplier);
+    }
 
     /**
      * Runnable class draws a pen to a canvas.

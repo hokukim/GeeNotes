@@ -4,7 +4,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.view.MotionEvent;
 
 import com.weehoo.geenotes.R;
 import com.weehoo.geenotes.canvas.CanvasView;
@@ -20,7 +19,7 @@ public class EraserTool extends PenTool
         mPaint.setColor(Color.TRANSPARENT);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-        mPaint.setStrokeWidth(10);
+        mPaint.setStrokeWidth(7.0f);
     }
 
     /**
@@ -31,7 +30,9 @@ public class EraserTool extends PenTool
     @Override
     public void onSelect(CanvasView canvasView) {
         super.onSelect(canvasView);
-        super.mPaint = this.mPaint;
+        super.mPaint = new Paint(this.mPaint);
+        super.mPaintStrokeWidthBase = 3.0f;
+        super.mPaintStrokePressureMulitplier = 7.0f;
     }
 
     /**
